@@ -609,6 +609,12 @@
   }
   .tp-end{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;}
 
+  /* ---- 조별 카드 안에 쌓이는 기록 ---- */
+  .entry + .entry{border-top:1px dashed var(--line);margin-top:10px;padding-top:10px;}
+  .entry-head{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-muted);margin-bottom:4px;}
+  .entry-no{font-family:'Noto Serif KR',serif;font-weight:700;color:#8a6a2f;font-size:13px;}
+  .entry-head .del-btn{margin-left:auto;font-size:14px;}
+
   @media (max-width:640px){
     .gate-cards{flex-direction:column;}
     .wrap{padding-bottom:110px;}
@@ -690,12 +696,12 @@
 <div id="timer-widget">
   <div class="timer-label">TIMER</div>
   <div class="timer-display" id="timer-display">00:00</div>
-  <div class="timer-controls">
+  <div class="timer-controls teacher-only">
     <button onclick="timerStartPause()" id="timer-startpause" title="시작/일시정지">▶</button>
     <button onclick="timerReset()" title="초기화">⟲</button>
   </div>
 </div>
-<div class="timer-presets">
+<div class="timer-presets teacher-only">
   <button onclick="timerSet(1)">1분</button>
   <button onclick="timerSet(5)">5분</button>
   <button onclick="timerSet(10)">10분</button>
@@ -1169,64 +1175,85 @@
   }
 
   /* =========================================================
-   * 공유 저장소 (Store) — 화면 코드가 쓰는 부분
-   * ※ ② 단계: 아직 원래처럼 이 컴퓨터 안(localStorage)에서만 공유됩니다.
-   *   ④ 단계에서 이 Store를 위 서버(backend)와 연결합니다.
+   * 공유 저장소 (Store) — 화면 코드와 서버 사이의 연결
+   * 서버(backend)의 수업 내용을 받아 화면용 데이터 S로 바꾸고,
+   * 화면에서 고친 내용은 '바뀐 칸만' 서버에 보냅니다. (여러 조가 동시에 눌러도 안전)
+   *   Store.toS(room)      → 서버 내용 → 화면용 S
+   *   Store.save(updates)  → { '경로': 값 } 만 서버에 저장 (값이 null이면 삭제)
    *
-   * 공유 데이터 모양(S):
-   *   materialOpen : 학습자료 공개 여부 (교사가 바꿈)
-   *   twistOpen    : ＋반전 사례 공개 여부 (교사가 바꿈)
+   * 서버에 저장되는 모양 (law3/rooms/{수업코드}/...):
+   *   ctrl/materialOpen, ctrl/twistOpen, ctrl/timer   ← 교사만 쓰기
+   *   vote/{조}            : '예' | '아니요' (조마다 마지막 선택)
+   *   voteLog/{id}         : { group, vote, ts }  (투표를 바꾼 기록 전부)
+   *   ideas/{조}/{id}      : { text, ts }               ← STAGE 1 생각 (누적)
+   *   systems/{조}/{id}    : { picks:[], etc, reason, ts } ← STAGE 2 추천 (누적)
+   *   reform/{조}/{id}     : { text, ts }               ← STAGE 3 의견 (누적)
+   *   twist/{id}           : { group, text, ts }        ← ＋반전 대답
+   *
+   * 화면용 S:
+   *   materialOpen, twistOpen, timer
    *   vote   : { '조번호': '예' | '아니요' }
-   *   ideas  : { '조번호': { text, ts } }               ← STAGE 1 생각
-   *   systems: { '조번호': { picks:[], etc, reason, ts } } ← STAGE 2 추천
-   *   reform : { '조번호': { text, ts } }               ← STAGE 3 의견
-   *   twist  : [ { id, group, text, ts } ]              ← ＋반전 대답
+   *   voteLog: [ { id, group, vote, ts } ]
+   *   ideas  : { '조번호': [ { id, text, ts } ] }
+   *   systems: { '조번호': [ { id, picks, etc, reason, ts } ] }
+   *   reform : { '조번호': [ { id, text, ts } ] }
+   *   twist  : [ { id, group, text, ts } ]
    * ========================================================= */
-  let STORE_KEY = 'law3_shared_v1';
+  // 저장소는 조 번호가 1,2,3…처럼 이어지면 목록(배열)으로 돌려주므로 다시 정리
+  function asObj(x){
+    if(!x) return {};
+    if(Array.isArray(x)){ const o = {}; x.forEach((v,i)=>{ if(v!==null && v!==undefined) o[i] = v; }); return o; }
+    return x;
+  }
+  function asList(x){
+    if(!x) return [];
+    if(Array.isArray(x)) return x.filter(v=>v!==null && v!==undefined);
+    return Object.keys(x).sort((a,b)=>Number(a)-Number(b)).map(k=>x[k]);
+  }
+  const byTime = (a,b)=>((a.ts||0)-(b.ts||0)) || (a.id<b.id ? -1 : 1);
+  function entriesByGroup(x, fix){
+    const out = {};
+    const o = asObj(x);
+    Object.keys(o).forEach(g=>{
+      const per = o[g] || {};
+      const list = Object.keys(per).map(id=>fix(Object.assign({id}, per[id]))).sort(byTime);
+      if(list.length) out[g] = list;
+    });
+    return out;
+  }
+
   const Store = {
-    mem: null,
     empty(){
-      return {materialOpen:false, twistOpen:false, vote:{}, ideas:{}, systems:{}, reform:{}, twist:[], rev:0};
+      return {materialOpen:false, twistOpen:false, timer:null, vote:{}, voteLog:[], ideas:{}, systems:{}, reform:{}, twist:[]};
     },
-    read(){
-      try{
-        const raw = localStorage.getItem(STORE_KEY);
-        if(raw) return Object.assign(this.empty(), JSON.parse(raw));
-      }catch(e){}
-      return this.mem ? this.mem : this.empty();
+    toS(r){
+      const S = this.empty();
+      if(!r) return S;
+      const ctrl = r.ctrl || {};
+      S.materialOpen = !!ctrl.materialOpen;
+      S.twistOpen = !!ctrl.twistOpen;
+      S.timer = ctrl.timer || null;
+      const v = asObj(r.vote);
+      Object.keys(v).forEach(g=>{ if(v[g]==='예' || v[g]==='아니요') S.vote[g] = v[g]; });
+      const vl = r.voteLog || {};
+      S.voteLog = Object.keys(vl).map(id=>Object.assign({id}, vl[id])).sort(byTime);
+      const text = e=>Object.assign(e, {text: String(e.text||'')});
+      S.ideas  = entriesByGroup(r.ideas, text);
+      S.reform = entriesByGroup(r.reform, text);
+      S.systems = entriesByGroup(r.systems, e=>Object.assign(e, {
+        picks: asList(e.picks).map(String), etc: String(e.etc||''), reason: String(e.reason||'')
+      }));
+      const tw = r.twist || {};
+      S.twist = Object.keys(tw).map(id=>Object.assign({id}, tw[id], {group:String(tw[id].group||''), text:String(tw[id].text||'')})).sort(byTime);
+      return S;
     },
-    write(d){
-      this.mem = d;
-      try{ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }catch(e){}
-    },
-    update(fn){
-      const d = this.read();
-      fn(d);
-      d.rev = (d.rev||0) + 1;
-      this.write(d);
-      return d;
+    save(updates){
+      if(!ROOM) return Promise.resolve();
+      return backend.update(ROOM, updates).catch(storeError);
     }
   };
 
   let S = Store.empty();
-  let lastRaw = null;
-  function rawNow(){ try{ return localStorage.getItem(STORE_KEY); }catch(e){ return null; } }
-
-  function commit(fn){
-    S = Store.update(fn);
-    lastRaw = rawNow();
-    renderShared();
-  }
-  function syncFromStore(){
-    if(!ROOM) return;
-    const raw = rawNow();
-    if(raw === lastRaw) return;
-    lastRaw = raw;
-    S = Store.read();
-    renderShared();
-  }
-  window.addEventListener('storage', e=>{ if(e.key===STORE_KEY) syncFromStore(); });
-  setInterval(syncFromStore, 1500);   // storage 이벤트를 놓쳤을 때를 대비한 보조 확인
 
   /* =========================================================
    * 이 기기의 정보: 수업 코드, 역할, 조 번호
@@ -1265,8 +1292,24 @@
       ${inner}
     </div>`;
   }
+  const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
+  function entryNo(i){ return i < CIRCLED.length ? CIRCLED[i] : '('+(i+1)+')'; }
+  function hhmm(ts){
+    if(!ts) return '';
+    const d = new Date(ts);
+    return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  // 조별 카드 안의 기록 한 건 (번호 · 시각 · 내용 · 우리 조면 삭제 버튼)
+  function entryHtml(g, e, i, kind, inner){
+    const canDel = !isTeacher() && String(g)===String(me.group);
+    return `<div class="entry">
+      <div class="entry-head"><span class="entry-no">${entryNo(i)}</span><span>${hhmm(e.ts)}</span>
+        ${canDel ? `<button class="del-btn" onclick="delEntry('${kind}','${escapeHtml(g)}','${escapeHtml(e.id)}')" title="삭제">✕</button>` : ''}</div>
+      ${inner}
+    </div>`;
+  }
   function needGroup(stage){
-    if(me.group){ return true; }
+    if(me.group && !isTeacher()){ return true; }
     const el = $('need-group-'+stage);
     if(el) el.hidden = false;
     toast('학생 화면에서 조를 정해 입장해야 작성할 수 있습니다.');
@@ -1290,6 +1333,26 @@
       history.replaceState(null,'',url);
     }catch(e){ /* 일부 환경에서는 주소 변경이 막혀 있어도 동작에는 문제 없음 */ }
   }
+
+  /* =========================================================
+   * 쓰다가 아직 공유하지 않은 글 임시 보관 (새로고침해도 되살림)
+   * ========================================================= */
+  const DRAFT_IDS = ['idea-text','sys-etc','sys-reason','reform-text','twist-text'];
+  function draftKey(){ return 'law3_draft_'+ROOM+'_'+me.group; }
+  function readDraft(){ try{ return JSON.parse(localStorage.getItem(draftKey())) || {}; }catch(e){ return {}; } }
+  function saveDraft(){
+    if(!ROOM || !me.group || isTeacher()) return;
+    const d = {picks: selPicks.slice()};
+    DRAFT_IDS.forEach(id=>{ d[id] = $(id).value; });
+    try{ localStorage.setItem(draftKey(), JSON.stringify(d)); }catch(e){}
+  }
+  function restoreDraft(){
+    const d = readDraft();
+    DRAFT_IDS.forEach(id=>{ $(id).value = d[id] || ''; });
+    selPicks = Array.isArray(d.picks) ? d.picks.filter(p=>SYSTEMS.includes(p)) : [];
+    renderChips();
+  }
+  DRAFT_IDS.forEach(id=>$(id).addEventListener('input', saveDraft));
 
   /* =========================================================
    * 입장 화면
@@ -1467,13 +1530,11 @@
     $('tp-code').textContent = code;
     $('share-link-input').value = pageBase() + '?code=' + code + practiceSuffix();
 
-    // ② 단계 임시: 내용 공유는 아직 이 컴퓨터 안에서만 (수업 코드별로 나눠 저장)
-    STORE_KEY = 'law3_shared_v1_' + code;
-    S = Store.read();
-    lastRaw = rawNow();
-
+    S = Store.empty();
+    lastTwistOpen = null;
+    if(isTeacher()){ DRAFT_IDS.forEach(id=>{ $(id).value = ''; }); selPicks = []; renderChips(); }
+    else restoreDraft();
     applyRole();
-    prefillForms(true);
     unsubscribe = backend.subscribe(code, onRoom);
   }
 
@@ -1489,12 +1550,16 @@
       return;
     }
     room = snap;
+    S = Store.toS(snap);
+    renderShared();
+    tickTimer();
   }
 
   function backToGate(msg){
     if(unsubscribe){ unsubscribe(); unsubscribe = null; }
     try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
     ROOM = null; room = null;
+    S = Store.empty();
     me = {role:'student', group:''};
     document.body.classList.remove('is-teacher');
     appScreen.hidden = true;
@@ -1514,7 +1579,6 @@
     try{
       await backend.deleteRoom(code);
       await backend.removeMyRoom(code);
-      try{ localStorage.removeItem('law3_shared_v1_'+code); }catch(e){}
       room = null;
       backToGate('');
       toast('수업을 종료하고 기록을 삭제했습니다.');
@@ -1545,18 +1609,17 @@
   }
 
   /* =========================================================
-   * 교사 제어
+   * 교사 제어 (서버 규칙이 교사 계정만 허락)
    * ========================================================= */
-  function toggleMaterial(){ if(!isTeacher()) return; commit(d=>{ d.materialOpen = !d.materialOpen; }); }
-  function toggleTwist(){ if(!isTeacher()) return; commit(d=>{ d.twistOpen = !d.twistOpen; }); }
+  function toggleMaterial(){ if(!isTeacher()) return; Store.save({'ctrl/materialOpen': !S.materialOpen}); }
+  function toggleTwist(){ if(!isTeacher()) return; Store.save({'ctrl/twistOpen': !S.twistOpen}); }
   function resetAll(){
     if(!isTeacher()) return;
-    if(!confirm('조별로 작성한 내용과 투표, 학습자료·반전 공개 상태를 모두 지웁니다. 계속할까요?')) return;
-    commit(d=>{ Object.assign(d, Store.empty(), {rev:d.rev}); });
-    ['idea-text','sys-reason','sys-etc','reform-text','twist-text'].forEach(id=>{ $(id).value=''; });
-    selPicks = [];
-    renderChips();
-    toast('수업 데이터를 모두 초기화했습니다.');
+    if(!confirm('조별로 작성한 내용과 투표, 학습자료·반전 공개 상태를 모두 지웁니다. (수업 코드는 그대로입니다) 계속할까요?')) return;
+    Store.save({
+      vote:null, voteLog:null, ideas:null, systems:null, reform:null, twist:null,
+      'ctrl/materialOpen':false, 'ctrl/twistOpen':false
+    }).then(()=>toast('수업 데이터를 모두 초기화했습니다.'));
   }
 
   /* =========================================================
@@ -1564,13 +1627,18 @@
    * ========================================================= */
   function castVote(v){
     if(!needGroup(1)) return;
-    commit(d=>{ d.vote[me.group] = v; });
+    Store.save({
+      ['vote/'+me.group]: v,
+      ['voteLog/'+backend.newId()]: {group:me.group, vote:v, ts:backend.now()}
+    });
   }
   function submitIdea(){
     if(!needGroup(1)) return;
     const text = $('idea-text').value.trim();
     if(!text){ toast('내용을 작성한 뒤 공유하세요.'); return; }
-    commit(d=>{ d.ideas[me.group] = {text, ts:Date.now()}; });
+    Store.save({['ideas/'+me.group+'/'+backend.newId()]: {text, ts:backend.now()}});
+    $('idea-text').value = '';
+    saveDraft();
     toast(me.group+'조의 생각이 공유되었습니다.');
   }
 
@@ -1587,6 +1655,7 @@
     const name = SYSTEMS[i];
     selPicks = selPicks.includes(name) ? selPicks.filter(x=>x!==name) : selPicks.concat(name);
     renderChips();
+    saveDraft();
   }
   function submitSystem(){
     if(!needGroup(2)) return;
@@ -1594,8 +1663,15 @@
     const reason = $('sys-reason').value.trim();
     if(selPicks.length===0 && !etc){ toast('추천하는 제도를 하나 이상 선택하세요.'); return; }
     if(!reason){ toast('추천하는 이유를 작성하세요.'); return; }
-    const picks = selPicks.slice();
-    commit(d=>{ d.systems[me.group] = {picks, etc, reason, ts:Date.now()}; });
+    const item = {reason, ts:backend.now()};
+    if(selPicks.length) item.picks = selPicks.slice();
+    if(etc) item.etc = etc;
+    Store.save({['systems/'+me.group+'/'+backend.newId()]: item});
+    selPicks = [];
+    renderChips();
+    $('sys-etc').value = '';
+    $('sys-reason').value = '';
+    saveDraft();
     toast(me.group+'조의 추천이 공유되었습니다.');
   }
 
@@ -1606,7 +1682,9 @@
     if(!needGroup(3)) return;
     const text = $('reform-text').value.trim();
     if(!text){ toast('내용을 작성한 뒤 공유하세요.'); return; }
-    commit(d=>{ d.reform[me.group] = {text, ts:Date.now()}; });
+    Store.save({['reform/'+me.group+'/'+backend.newId()]: {text, ts:backend.now()}});
+    $('reform-text').value = '';
+    saveDraft();
     toast(me.group+'조의 의견이 공유되었습니다.');
   }
 
@@ -1617,30 +1695,27 @@
     if(!needGroup(4)) return;
     const text = $('twist-text').value.trim();
     if(!text){ toast('대답을 작성한 뒤 추가하세요.'); return; }
-    commit(d=>{ d.twist.push({id:Date.now()+'-'+Math.random().toString(36).slice(2,6), group:me.group, text, ts:Date.now()}); });
+    Store.save({['twist/'+backend.newId()]: {group:me.group, text, ts:backend.now()}});
     $('twist-text').value = '';
+    saveDraft();
   }
   function delTwist(id){
-    commit(d=>{ d.twist = d.twist.filter(a=>!(a.id===id && String(a.group)===String(me.group))); });
+    const a = S.twist.find(x=>x.id===id);
+    if(!a || isTeacher() || String(a.group)!==String(me.group)) return;
+    if(!confirm('이 대답을 지울까요?')) return;
+    Store.save({['twist/'+id]: null});
+  }
+  // 조별 기록(생각·추천·의견) 삭제 — 우리 조 것만
+  function delEntry(kind, g, id){
+    if(!['ideas','systems','reform'].includes(kind)) return;
+    if(isTeacher() || String(g)!==String(me.group)) return;
+    if(!confirm('이 기록을 지울까요?')) return;
+    Store.save({[kind+'/'+g+'/'+id]: null});
   }
 
   /* =========================================================
    * 화면 그리기
    * ========================================================= */
-  // 내 조가 이미 제출한 내용을 입력칸에 채워 줌 (입력 중인 내용은 지우지 않음)
-  function prefillForms(force){
-    const g = me.group;
-    if(!g) return;
-    const fill = (id, val)=>{ const el=$(id); if(el && val!==undefined && (force || !el.value)) el.value = val; };
-    if(S.ideas[g]) fill('idea-text', S.ideas[g].text);
-    if(S.reform[g]) fill('reform-text', S.reform[g].text);
-    if(S.systems[g]){
-      fill('sys-reason', S.systems[g].reason);
-      fill('sys-etc', S.systems[g].etc || '');
-      if(force || selPicks.length===0){ selPicks = S.systems[g].picks.slice(); renderChips(); }
-    }
-  }
-
   let lastStudyOpen = null;
   function renderStudy(){
     const open = !!S.materialOpen || isTeacher();
@@ -1685,62 +1760,70 @@
     $('tally-no-n').textContent  = no.length+'개 조';
     $('tally-yes-bar').style.width = (yes.length/total*100)+'%';
     $('tally-no-bar').style.width  = (no.length/total*100)+'%';
-    $('tally-yes-groups').innerHTML = yes.map(g=>`<span class="group-badge">${g}조</span>`).join('');
-    $('tally-no-groups').innerHTML  = no.map(g=>`<span class="group-badge">${g}조</span>`).join('');
+    $('tally-yes-groups').innerHTML = yes.map(g=>`<span class="group-badge">${escapeHtml(g)}조</span>`).join('');
+    $('tally-no-groups').innerHTML  = no.map(g=>`<span class="group-badge">${escapeHtml(g)}조</span>`).join('');
+  }
+
+  // STAGE 2: 어떤 제도를 몇 개 조가 추천했는지 (한 조가 여러 번 추천해도 1개 조)
+  function systemCounts(){
+    const count = {};
+    groupsOf(S.systems).forEach(g=>{
+      const names = new Set();
+      S.systems[g].forEach(it=>{ it.picks.forEach(p=>names.add(p)); if(it.etc) names.add(it.etc); });
+      names.forEach(n=>{ count[n] = (count[n]||0)+1; });
+    });
+    return count;
+  }
+  function systemTagsHtml(it){
+    const tags = it.picks.concat(it.etc ? [it.etc] : []);
+    return `<div class="share-tags">${tags.map(t=>`<span class="share-tag">${escapeHtml(t)}</span>`).join('')}</div>
+      <div class="share-reason-label">추천 이유</div>
+      <div class="share-body">${escapeHtml(it.reason)}</div>`;
   }
 
   function renderBoards(){
     // STAGE 1
     const ideaGs = groupsOf(S.ideas);
     $('board-idea').innerHTML = ideaGs.length
-      ? ideaGs.map(g=>cardHtml(g, `<div class="share-body">${escapeHtml(S.ideas[g].text)}</div>`)).join('')
+      ? ideaGs.map(g=>cardHtml(g, S.ideas[g].map((e,i)=>entryHtml(g, e, i, 'ideas',
+          `<div class="share-body">${escapeHtml(e.text)}</div>`)).join(''))).join('')
       : '<div class="empty-hint">아직 공유된 생각이 없습니다.</div>';
 
     // STAGE 2
     const sysGs = groupsOf(S.systems);
-    const count = {};
-    sysGs.forEach(g=>{
-      const it = S.systems[g];
-      it.picks.forEach(p=>{ count[p]=(count[p]||0)+1; });
-      if(it.etc){ count[it.etc]=(count[it.etc]||0)+1; }
-    });
+    const count = systemCounts();
     const ranked = Object.keys(count).sort((a,b)=>count[b]-count[a]);
     const max = ranked.length ? count[ranked[0]] : 1;
     $('rank-list').innerHTML = ranked.length
       ? ranked.map(name=>`<li class="rank-item"><span class="rank-name">${escapeHtml(name)}</span><span class="rank-bar"><i style="width:${count[name]/max*100}%"></i></span><span class="rank-count">${count[name]}조</span></li>`).join('')
       : '';
     $('board-system').innerHTML = sysGs.length
-      ? sysGs.map(g=>{
-          const it = S.systems[g];
-          const tags = it.picks.concat(it.etc ? [it.etc] : []);
-          return cardHtml(g,
-            `<div class="share-tags">${tags.map(t=>`<span class="share-tag">${escapeHtml(t)}</span>`).join('')}</div>
-             <div class="share-reason-label">추천 이유</div>
-             <div class="share-body">${escapeHtml(it.reason)}</div>`);
-        }).join('')
+      ? sysGs.map(g=>cardHtml(g, S.systems[g].map((it,i)=>entryHtml(g, it, i, 'systems', systemTagsHtml(it))).join(''))).join('')
       : '<div class="empty-hint">아직 공유된 추천이 없습니다.</div>';
 
     // STAGE 3
     const refGs = groupsOf(S.reform);
     $('board-reform').innerHTML = refGs.length
-      ? refGs.map(g=>cardHtml(g, `<div class="share-body">${escapeHtml(S.reform[g].text)}</div>`)).join('')
+      ? refGs.map(g=>cardHtml(g, S.reform[g].map((e,i)=>entryHtml(g, e, i, 'reform',
+          `<div class="share-body">${escapeHtml(e.text)}</div>`)).join(''))).join('')
       : '<div class="empty-hint">아직 공유된 의견이 없습니다.</div>';
 
     // ＋ 반전
     $('board-twist').innerHTML = S.twist.length
       ? S.twist.map(a=>{
-          const mine = String(a.group)===String(me.group);
+          const mine = !isTeacher() && String(a.group)===String(me.group);
           return `<li class="answer-item"><span class="group-badge">${escapeHtml(a.group)}조</span>
             <span class="qtext">${escapeHtml(a.text)}</span>
-            ${mine ? `<button class="del-btn" onclick="delTwist('${a.id}')" title="삭제">✕</button>` : ''}</li>`;
+            ${mine ? `<button class="del-btn" onclick="delTwist('${escapeHtml(a.id)}')" title="삭제">✕</button>` : ''}</li>`;
         }).join('')
       : '<div class="empty-hint">아직 공유된 대답이 없습니다.</div>';
 
     // 제출 표시
     const g = me.group;
-    $('state-idea').textContent   = (g && S.ideas[g])   ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
-    $('state-system').textContent = (g && S.systems[g]) ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
-    $('state-reform').textContent = (g && S.reform[g])  ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
+    const state = list=> (g && list && list.length) ? `✓ ${list.length}번 공유됨 (다시 작성해 누르면 아래에 이어서 쌓입니다)` : '';
+    $('state-idea').textContent   = state(S.ideas[g]);
+    $('state-system').textContent = state(S.systems[g]);
+    $('state-reform').textContent = state(S.reform[g]);
   }
 
   function renderTeacherPanel(){
@@ -1758,11 +1841,12 @@
     for(let i=1;i<=GROUP_COUNT;i++){
       const k = String(i);
       const cell = (ok, text)=> ok ? `<td class="ok">${text||'✓'}</td>` : '<td class="no">–</td>';
+      const n = list=> (list && list.length) || 0;
       rows += `<tr><td><strong>${i}조</strong></td>
         ${cell(!!S.vote[k], S.vote[k])}
-        ${cell(!!S.ideas[k])}
-        ${cell(!!S.systems[k])}
-        ${cell(!!S.reform[k])}
+        ${cell(n(S.ideas[k])>0, n(S.ideas[k])+'개')}
+        ${cell(n(S.systems[k])>0, n(S.systems[k])+'개')}
+        ${cell(n(S.reform[k])>0, n(S.reform[k])+'개')}
         ${cell(!!twistCount[k], (twistCount[k]||0)+'개')}</tr>`;
     }
     $('status-table').innerHTML = rows;
@@ -1777,53 +1861,60 @@
   }
 
   /* =========================================================
-   * 타이머 (※ ⑤ 단계에서 교사 화면과 동기화 예정 — 지금은 기기마다 따로)
+   * 타이머 — 교사만 조작, 모든 화면에 같은 시간 (서버 시계 기준)
+   *   ctrl/timer : { seconds, running, endTime, done }
    * ========================================================= */
-  let timerSeconds = 0;
-  let timerRunning = false;
-  let timerHandle = null;
   const timerDisplay = $('timer-display');
   const timerWidget = $('timer-widget');
   const timerBtn = $('timer-startpause');
+  let beepedFor = null;
 
   function formatTime(sec){
     const m = Math.floor(sec/60).toString().padStart(2,'0');
     const s = (sec%60).toString().padStart(2,'0');
     return m+':'+s;
   }
-  function renderTimer(){ timerDisplay.textContent = formatTime(Math.max(timerSeconds,0)); }
+  function timerState(){
+    return S.timer || {seconds:0, running:false, endTime:0, done:false};
+  }
+  function writeTimer(t){ Store.save({'ctrl/timer': t}); }
   function timerSet(minutes){
-    timerPause();
-    timerSeconds = minutes*60;
-    timerWidget.classList.remove('done');
-    renderTimer();
+    if(!isTeacher()) return;
+    writeTimer({seconds:minutes*60, running:false, endTime:0, done:false});
   }
   function timerStartPause(){
-    if(timerRunning){ timerPause(); return; }
-    if(timerSeconds<=0) return;
-    timerRunning = true;
-    timerBtn.textContent = '❚❚';
-    timerWidget.classList.remove('done');
-    timerHandle = setInterval(()=>{
-      timerSeconds--;
-      renderTimer();
-      if(timerSeconds<=0){
-        timerPause();
-        timerWidget.classList.add('done');
-        beep();
-      }
-    },1000);
-  }
-  function timerPause(){
-    timerRunning = false;
-    timerBtn.textContent = '▶';
-    if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+    if(!isTeacher()) return;
+    const t = timerState();
+    if(t.running){
+      const remaining = Math.max(0, Math.ceil((t.endTime - backend.now())/1000));
+      writeTimer({seconds:remaining, running:false, endTime:0, done:false});
+    } else {
+      if((t.seconds||0)<=0) return;
+      writeTimer({seconds:t.seconds, running:true, endTime:backend.now()+t.seconds*1000, done:false});
+    }
   }
   function timerReset(){
-    timerPause();
-    timerSeconds = 0;
-    timerWidget.classList.remove('done');
-    renderTimer();
+    if(!isTeacher()) return;
+    writeTimer({seconds:0, running:false, endTime:0, done:false});
+  }
+  function tickTimer(){
+    const t = timerState();
+    let remaining = Math.max(0, t.seconds||0);
+    let done = !!t.done;
+    if(t.running && t.endTime){
+      remaining = Math.max(0, Math.ceil((t.endTime - backend.now())/1000));
+      if(remaining<=0){
+        done = true;
+        if(beepedFor!==t.endTime){
+          beepedFor = t.endTime;
+          beep();
+          if(isTeacher()) writeTimer({seconds:0, running:false, endTime:0, done:true});
+        }
+      }
+    }
+    timerDisplay.textContent = formatTime(remaining);
+    timerWidget.classList.toggle('done', done);
+    timerBtn.textContent = t.running ? '❚❚' : '▶';
   }
   function beep(){
     try{
@@ -1838,7 +1929,7 @@
       setTimeout(()=>{ osc.stop(); ctx.close(); }, 500);
     }catch(e){ /* 오디오 미지원 브라우저는 무시 */ }
   }
-  renderTimer();
+  setInterval(()=>{ if(ROOM) tickTimer(); }, 250);
 
   /* =========================================================
    * 시작
