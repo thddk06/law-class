@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무죄가 나와도 억울한 이유 — 형사 절차와 인권 보장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C2430;
+    --paper:#EDE6D6;
+    --paper-raise:#F5F0E4;
+    --line:#C9BFA8;
+    --text-muted:#6B6250;
+    --gold:#B08D57;
+    --gold-soft:#EDE0C8;
+    --teamA:#8B3A3A;
+    --teamA-soft:#F1DEDA;
+    --teamA-line:#C79A94;
+    --teamB:#2F5D62;
+    --teamB-soft:#DCEAE8;
+    --teamB-line:#9BC0BE;
+    --plum:#6B3F6E;
+    --plum-soft:#E9DDE9;
+    --plum-line:#A98BAC;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:20px 20px 60px;}
+
+  /* ---- 역할 바 (학생 / 교사) ---- */
+  .role-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:0 150px 18px 0;
+    padding:10px 14px;
+    background:var(--paper-raise);
+    border:1px solid var(--line);
+    border-radius:9px;
+    font-size:13px;
+  }
+  .role-bar .role-label{font-weight:700;color:var(--text-muted);}
+  .role-bar select{
+    padding:7px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:#fff;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .role-bar .spacer{flex:1;}
+  .role-pill{
+    font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;
+    background:var(--ink);color:var(--paper-raise);
+  }
+  body.is-teacher .role-pill{background:var(--plum);}
+  body.is-teacher .student-only{display:none !important;}
+  body:not(.is-teacher) .teacher-only{display:none !important;}
+
+  /* ---- Header: 사건 기록부 표지 ---- */
+  header{
+    text-align:center;
+    padding:8px 0 22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:26px;
+  }
+  .case-no{
+    font-size:12px;
+    letter-spacing:0.04em;
+    color:var(--text-muted);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:clamp(26px,4vw,36px);
+    margin:0 0 8px;
+  }
+  .subtitle{font-size:14px;color:var(--text-muted);}
+
+  /* ---- Stage tabs ---- */
+  .tabs{display:flex;gap:6px;margin-bottom:0;position:relative;z-index:2;}
+  .tab{
+    flex:1;
+    padding:14px 10px 12px;
+    text-align:center;
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--text-muted);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-bottom:none;
+    border-radius:10px 10px 0 0;
+    cursor:pointer;
+    transform:translateY(6px);
+    transition:transform .18s ease, background .18s ease, color .18s ease;
+    user-select:none;
+  }
+  .tab .tab-num{
+    display:block;
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:500;
+    font-size:11px;
+    color:var(--text-muted);
+    margin-bottom:4px;
+    letter-spacing:.04em;
+  }
+  .tab.active{
+    background:var(--paper-raise);
+    color:var(--ink);
+    transform:translateY(0);
+    border-color:var(--gold);
+  }
+  .tab.active .tab-num{color:var(--gold);}
+  .tab.tab-plus{flex:0 0 96px;border-style:dashed;border-color:var(--plum-line);}
+  .tab.tab-plus .tab-num{color:var(--plum);}
+  .tab.tab-plus.active{border-style:solid;border-color:var(--plum);}
+  .tab.tab-plus.active .tab-num{color:var(--plum);}
+  .tab-plus .plus-mark{font-size:20px;line-height:1;}
+
+  .stage-panel{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:0 10px 10px 10px;
+    padding:28px;
+    position:relative;
+  }
+  .stage-panel.plus-panel{border-color:var(--plum);}
+  .stage-panel[hidden]{display:none;}
+
+  .stimulus{
+    font-family:'Noto Serif KR', serif;
+    font-size:17px;
+    line-height:1.75;
+    padding:14px 0 14px 20px;
+    border-left:3px solid var(--gold);
+    color:var(--ink);
+    margin-bottom:18px;
+  }
+  .stimulus.plum{border-left-color:var(--plum);}
+  .stimulus small{
+    display:block;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:12px;
+    color:var(--text-muted);
+    margin-top:6px;
+  }
+
+  .btn{
+    padding:11px 18px;
+    border:none;
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    background:var(--ink);
+    color:var(--paper-raise);
+  }
+  .btn:hover{opacity:.88;}
+  .btn.small{padding:6px 11px;font-size:12px;font-weight:500;}
+  .btn.ghost{background:transparent;color:var(--text-muted);border:1px solid var(--line);}
+  .btn.plum{background:var(--plum);}
+  .btn.danger{background:var(--teamA);}
+
+  .group-badge{
+    font-size:11px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:5px;
+    background:var(--ink);
+    color:var(--paper-raise);
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .empty-hint{color:var(--text-muted);font-size:13px;padding:14px 2px;}
+  .section-title{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:15px;
+    margin:26px 0 12px;
+    color:var(--ink);
+  }
+
+  /* ---- 입력 폼 (조별 작성) ---- */
+  .write-box{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .write-box label{display:block;font-size:12.5px;font-weight:700;color:var(--text-muted);margin:0 0 6px;}
+  .write-box label + textarea, .write-box label + input{margin-bottom:12px;}
+  textarea, .text-input{
+    width:100%;
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:14px;
+    background:#fff;
+    color:var(--ink);
+    resize:vertical;
+  }
+  textarea{min-height:92px;line-height:1.6;}
+  textarea:focus, .text-input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .write-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .submit-state{font-size:12.5px;color:var(--teamB);font-weight:700;}
+  .need-group{
+    font-size:12.5px;color:var(--teamA);background:var(--teamA-soft);
+    border:1px solid var(--teamA-line);border-radius:7px;padding:8px 12px;margin-bottom:12px;
+  }
+
+  /* ---- 예 / 아니요 투표 ---- */
+  .vote-row{display:flex;gap:12px;margin-bottom:14px;}
+  .vote-btn{
+    flex:1;
+    padding:16px 10px;
+    border-radius:9px;
+    border:2px solid var(--line);
+    background:#fff;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:18px;
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .vote-btn:hover{border-color:var(--gold);color:var(--ink);}
+  .vote-btn.yes.on{background:var(--teamA);border-color:var(--teamA);color:#fff;}
+  .vote-btn.no.on{background:var(--teamB);border-color:var(--teamB);color:#fff;}
+  .tally{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .tally-col{background:#fff;border:1px solid var(--line);border-radius:9px;padding:12px 14px;}
+  .tally-col h4{margin:0 0 6px;font-family:'Noto Serif KR',serif;font-size:14px;display:flex;justify-content:space-between;}
+  .tally-col.yes h4{color:var(--teamA);}
+  .tally-col.no h4{color:var(--teamB);}
+  .tally-bar{height:8px;border-radius:4px;background:var(--paper);overflow:hidden;margin-bottom:8px;}
+  .tally-bar i{display:block;height:100%;width:0;transition:width .3s ease;}
+  .tally-col.yes .tally-bar i{background:var(--teamA);}
+  .tally-col.no .tally-bar i{background:var(--teamB);}
+  .tally-groups{display:flex;flex-wrap:wrap;gap:4px;min-height:22px;}
+
+  /* ---- 제도 선택 칩 (STAGE 2) ---- */
+  .chip-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+  .chip{
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:13px;
+    padding:7px 12px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .chip:hover{border-color:var(--gold);color:var(--ink);}
+  .chip.on{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;}
+
+  /* ---- 실시간 공유 게시판 ---- */
+  .board-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin:22px 0 10px;
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:15px;
+  }
+  .live-dot{
+    font-family:'Noto Sans KR',sans-serif;font-size:11.5px;font-weight:500;color:var(--teamB);
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .live-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teamB);animation:blink 1.4s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .board{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+  .share-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:12px 14px;
+  }
+  .share-card.mine{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold-soft);}
+  .share-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .mine-tag{font-size:11px;color:#8a6a2f;font-weight:700;}
+  .share-body{font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;}
+  .share-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+  .share-tag{
+    font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;
+    background:var(--gold-soft);color:#7c5f27;border:1px solid var(--gold);
+  }
+  .share-reason-label{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:2px;}
+  .rank-list{margin:0 0 14px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .rank-item{display:flex;align-items:center;gap:10px;font-size:13px;}
+  .rank-name{flex:0 0 190px;}
+  .rank-bar{flex:1;height:8px;border-radius:4px;background:var(--paper);overflow:hidden;}
+  .rank-bar i{display:block;height:100%;background:var(--gold);}
+  .rank-count{flex:0 0 40px;text-align:right;font-weight:700;color:#7c5f27;}
+
+  .answer-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .answer-item{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:10px 12px;background:#fff;border:1px solid var(--plum-line);border-radius:7px;
+  }
+  .answer-item .qtext{flex:1;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;}
+  .del-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:16px;padding:2px 4px;}
+  .del-btn:hover{color:var(--teamA);}
+
+  /* ---- 사건 개요 / 학습자료 ---- */
+  .case-brief{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    margin-bottom:22px;
+    overflow:hidden;
+  }
+  .case-brief.plum{border-color:var(--plum);}
+  .case-brief summary{
+    list-style:none;
+    cursor:pointer;
+    padding:16px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:16px;
+  }
+  .case-brief summary::-webkit-details-marker{display:none;}
+  .case-brief summary::after{
+    content:'▾';
+    font-family:'Noto Sans KR',sans-serif;
+    color:var(--gold);
+    transition:transform .2s ease;
+  }
+  .case-brief[open] summary::after{transform:rotate(180deg);}
+  .case-brief-tag{
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:500;
+    font-size:11.5px;
+    color:var(--text-muted);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:3px 10px;
+    white-space:nowrap;
+  }
+  .case-brief-body{padding:0 22px 22px;border-top:1px solid var(--line);}
+  .case-brief-body p{
+    font-family:'Noto Serif KR',serif;
+    font-size:15px;
+    line-height:1.85;
+    margin:16px 0 0;
+  }
+  .case-brief-body ul{margin:12px 0 0;padding-left:20px;}
+  .case-brief-body li{font-size:14px;line-height:1.75;margin-bottom:6px;color:var(--ink);}
+  .case-brief-body .brief-question{
+    margin-top:18px;
+    padding:14px 16px;
+    background:var(--gold-soft);
+    border-radius:7px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:15px;
+  }
+  .case-brief.plum .brief-question{background:var(--plum-soft);}
+  .case-brief-source{
+    display:block;
+    margin-top:14px;
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+  .study-locked{
+    font-size:13.5px;
+    color:var(--text-muted);
+    background:var(--paper);
+    border:1px dashed var(--line);
+    border-radius:9px;
+    padding:16px 20px;
+    text-align:center;
+    margin-top:22px;
+  }
+  .study-host{margin-top:22px;}
+  .study-host .study-locked{margin-top:0;}
+  .study-host .case-brief{margin-bottom:0;}
+  .info-table{width:100%;border-collapse:collapse;margin-top:10px;}
+  .info-table th, .info-table td{
+    border:1px solid var(--line);
+    padding:8px 10px;
+    font-size:13px;
+    text-align:left;
+    vertical-align:top;
+    line-height:1.6;
+  }
+  .info-table th{
+    background:var(--gold-soft);
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    width:130px;
+    color:#7c5f27;
+  }
+  .info-table td ol, .info-table td ul{margin:0;padding-left:18px;}
+  .info-table .kv{margin-bottom:6px;}
+  .info-table .kv:last-child{margin-bottom:0;}
+  .info-table .kv b{color:#7c5f27;margin-right:6px;}
+  .info-subhead{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:14px;
+    margin:20px 0 4px;
+    color:var(--ink);
+  }
+
+  /* ---- 교사 패널 ---- */
+  .teacher-panel{
+    background:var(--plum-soft);
+    border:1px solid var(--plum-line);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-bottom:20px;
+  }
+  .teacher-panel h3{margin:0 0 4px;font-family:'Noto Serif KR',serif;font-size:15px;color:var(--plum);}
+  .teacher-panel .tp-note{font-size:12px;color:var(--text-muted);margin:0 0 12px;}
+  .tp-switches{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .tp-switch{
+    display:flex;align-items:center;gap:10px;
+    background:#fff;border:1px solid var(--plum-line);border-radius:9px;padding:10px 14px;
+  }
+  .tp-switch .tp-name{font-size:13px;font-weight:700;}
+  .tp-switch .tp-state{font-size:12px;color:var(--text-muted);min-width:34px;}
+  .tp-switch.on .tp-state{color:var(--teamB);font-weight:700;}
+  .status-table{width:100%;border-collapse:collapse;background:#fff;}
+  .status-table th, .status-table td{
+    border:1px solid var(--plum-line);padding:6px 8px;font-size:12.5px;text-align:center;
+  }
+  .status-table th{background:var(--plum-soft);color:var(--plum);}
+  .status-table td.ok{color:var(--teamB);font-weight:700;}
+  .status-table td.no{color:#b9b09c;}
+  .status-scroll{overflow-x:auto;}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper-raise);
+    padding:11px 20px;border-radius:24px;font-size:13.5px;font-weight:500;
+    opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
+    z-index:100;max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .plus-lock{
+    text-align:center;padding:46px 20px;color:var(--text-muted);
+    background:var(--paper);border:1px dashed var(--plum-line);border-radius:9px;
+  }
+  .plus-lock strong{display:block;font-family:'Noto Serif KR',serif;font-size:17px;color:var(--plum);margin-bottom:6px;}
+  .teacher-banner{
+    font-size:12.5px;color:var(--plum);background:var(--plum-soft);
+    border:1px solid var(--plum-line);border-radius:7px;padding:8px 12px;margin-bottom:14px;
+  }
+
+  .footer-note{text-align:center;color:var(--text-muted);font-size:12.5px;margin-top:26px;}
+
+  @media (max-width:720px){
+    .tally{grid-template-columns:1fr;}
+    .rank-name{flex-basis:130px;}
+    .stage-panel{padding:20px 16px;}
+  }
+
+  /* ---- Timer (stamp-style, fixed) ---- */
+  #timer-widget{
+    position:fixed;
+    top:18px;
+    right:18px;
+    width:132px;
+    background:var(--paper-raise);
+    border:2px solid var(--gold);
+    border-radius:50%;
+    aspect-ratio:1/1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    box-shadow:0 2px 10px rgba(28,36,48,0.14);
+    z-index:50;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  #timer-widget.done{border-color:var(--teamA);animation:pulse 1s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{background:var(--paper-raise);}50%{background:var(--teamA-soft);}}
+  .timer-label{font-size:10px;letter-spacing:.06em;color:var(--text-muted);}
+  .timer-display{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:24px;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .timer-controls{display:flex;gap:4px;}
+  .timer-controls button{background:none;border:none;cursor:pointer;font-size:13px;color:var(--text-muted);padding:1px 3px;}
+  .timer-controls button:hover{color:var(--ink);}
+  .timer-presets{
+    position:fixed;
+    top:154px;
+    right:18px;
+    width:132px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    justify-content:center;
+    z-index:50;
+  }
+  .timer-presets button{
+    font-size:11px;
+    padding:4px 7px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:var(--paper-raise);
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .timer-presets button:hover{border-color:var(--gold);color:var(--ink);}
+
+  @media (max-width:640px){
+    #timer-widget{width:88px;top:10px;right:10px;}
+    .timer-display{font-size:17px;}
+    .timer-label{font-size:8.5px;}
+    .timer-presets{width:88px;top:104px;right:10px;}
+    .timer-presets button{font-size:9.5px;padding:3px 5px;}
+    .role-bar{margin-right:100px;}
+  }
+
+  /* ============================================================
+     여기부터 여러 기기 실시간 공유 버전에서 추가된 모양 (기존 디자인은 위 그대로)
+  ============================================================ */
+  [hidden]{display:none !important;}
+
+  /* ---- 입장 화면 ---- */
+  #gate-screen{min-height:100vh;display:flex;align-items:center;}
+  .gate-wrap{max-width:720px;width:100%;margin:0 auto;padding:40px 20px;text-align:center;}
+  .gate-cards{display:flex;gap:16px;margin-top:28px;text-align:left;}
+  .gate-card{
+    flex:1;min-width:0;
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:22px;
+    display:flex;flex-direction:column;
+  }
+  .gate-card.teacher{border-color:var(--plum-line);}
+  .gate-card-title{font-family:'Noto Serif KR',serif;font-weight:700;font-size:16px;margin-bottom:8px;}
+  .gate-card.teacher .gate-card-title{color:var(--plum);}
+  .gate-card p{font-size:13px;color:var(--text-muted);margin:0 0 16px;}
+  .gate-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .gate-field label{font-size:12px;color:var(--text-muted);}
+  .gate-field input, .gate-field select{
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:16px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .gate-field input{letter-spacing:.08em;}
+  .gate-field input:focus, .gate-field select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .gate-actions{display:flex;flex-direction:column;gap:8px;}
+  .gate-user{font-size:12.5px;color:var(--text-muted);margin-bottom:10px;overflow-wrap:anywhere;}
+  .gate-user strong{color:var(--plum);}
+  .gate-msg{margin-top:18px;padding:12px 16px;border-radius:8px;font-size:13.5px;text-align:left;}
+  .gate-msg.error{background:var(--teamA-soft);color:var(--teamA);border:1px solid var(--teamA-line);}
+  .gate-msg.warn{background:var(--gold-soft);color:#7c5f27;border:1px solid var(--gold);}
+  .gate-msg.plain{color:var(--text-muted);padding:0;margin-top:12px;}
+  .gate-msg.plum{background:var(--plum-soft);color:var(--plum);border:1px solid var(--plum-line);}
+  .uid-box{
+    display:flex;gap:6px;align-items:center;margin-top:8px;
+  }
+  .uid-box input{
+    flex:1;min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:6px;
+    font-family:monospace;font-size:12px;background:#fff;color:var(--ink);
+  }
+
+  /* ---- 역할 바: 수업 코드 표시 ---- */
+  .room-info{color:var(--text-muted);}
+  .room-info strong{color:var(--ink);font-family:'Noto Serif KR',serif;letter-spacing:.06em;font-size:15px;}
+  .mode-note{
+    background:var(--gold-soft);color:#7c5f27;border:1px solid var(--gold);
+    border-radius:8px;padding:8px 14px;font-size:12.5px;text-align:center;margin-bottom:18px;
+  }
+
+  /* ---- 교사 패널: 수업 코드 / 학생 링크 ---- */
+  .tp-room{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--plum-line);border-radius:9px;
+    padding:12px 14px;margin-bottom:12px;
+  }
+  .tp-room .tp-name{font-size:13px;font-weight:700;}
+  .big-code{
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:30px;
+    letter-spacing:.14em;line-height:1;color:var(--plum);
+  }
+  .tp-link{display:flex;gap:6px;flex:1;min-width:220px;}
+  .tp-link input{
+    flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:6px;
+    font-size:12.5px;background:#fff;color:var(--text-muted);
+  }
+  .tp-end{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+  @media (max-width:640px){
+    .gate-cards{flex-direction:column;}
+    .wrap{padding-bottom:110px;}
+    .tp-room{gap:8px;}
+    .mode-note{margin-right:100px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- 입장 화면: 학생은 수업 코드 + 조 / 교사는 구글 로그인 후 수업 만들기 -->
+<!-- ============================================================ -->
+<div id="gate-screen">
+  <div class="gate-wrap">
+    <div class="case-no">사건번호 2026 — 형사 — 104 · 법과사회 수행 워크시트</div>
+    <h1>무죄가 나와도 억울한 이유</h1>
+    <div class="subtitle">형사 절차와 인권 보장 제도로 보는 사건 — 실시간 수업 입장 (3차시)</div>
+
+    <div class="gate-cards">
+      <div class="gate-card">
+        <div class="gate-card-title">학생</div>
+        <p>선생님께 받은 수업 코드와 우리 조를 입력하세요. 이름은 입력하지 않습니다.</p>
+        <div class="gate-field">
+          <label for="gate-code-input">수업 코드 (숫자 4자리)</label>
+          <input type="text" id="gate-code-input" inputmode="numeric" maxlength="4" placeholder="예: 4827" autocomplete="off">
+        </div>
+        <div class="gate-field">
+          <label for="gate-group-select">우리 조</label>
+          <select id="gate-group-select"></select>
+        </div>
+        <button class="btn" id="gate-join-btn">입장하기</button>
+      </div>
+
+      <div class="gate-card teacher">
+        <div class="gate-card-title">교사</div>
+        <p>선생님 구글 계정으로 로그인한 뒤 새 수업을 열고, 학생들에게 알려줄 수업 코드를 만듭니다.</p>
+        <!-- 로그인 전 -->
+        <div class="gate-actions" id="gate-t-signedout">
+          <button class="btn plum" id="gate-login-btn">구글 계정으로 로그인</button>
+        </div>
+        <!-- 로그인 후 (교사 확인됨) -->
+        <div class="gate-actions" id="gate-t-ok" hidden>
+          <div class="gate-user" id="gate-t-user"></div>
+          <button class="btn plum" id="gate-create-btn">새 수업 만들기</button>
+          <div id="gate-my-rooms" class="gate-msg plain" hidden></div>
+          <button class="btn ghost small" id="gate-logout-btn">로그아웃</button>
+        </div>
+        <!-- 로그인했지만 교사로 등록되지 않은 계정 -->
+        <div class="gate-actions" id="gate-t-denied" hidden>
+          <div class="gate-msg plum" style="margin-top:0;">
+            이 구글 계정은 아직 교사로 등록되지 않았습니다.<br>
+            Firebase 보안 규칙에 아래 <strong>계정 고유번호</strong>를 넣으면 교사로 등록됩니다.
+            <div class="uid-box">
+              <input type="text" id="gate-uid" readonly onclick="this.select()" aria-label="계정 고유번호">
+              <button class="btn small" id="gate-uid-copy">복사</button>
+            </div>
+          </div>
+          <button class="btn ghost small" id="gate-logout-btn2">로그아웃</button>
+        </div>
+        <!-- 연습 모드 -->
+        <div class="gate-actions" id="gate-t-practice" hidden>
+          <button class="btn plum" id="gate-practice-btn">연습용 교사로 새 수업 만들기</button>
+          <div id="gate-my-rooms-p" class="gate-msg plain" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="gate-error" class="gate-msg error" hidden></div>
+    <div id="gate-mode-note" class="gate-msg warn" hidden>연습 모드입니다. 인터넷 저장소에 연결하지 않고, 이 컴퓨터의 같은 브라우저 창끼리만 내용이 공유됩니다. (교사 로그인 없이 연습할 수 있어요)</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 수업 화면 (아래는 원래 3차시 화면 그대로)                        -->
+<!-- ============================================================ -->
+<div id="app-screen" hidden>
+
+<div id="timer-widget">
+  <div class="timer-label">TIMER</div>
+  <div class="timer-display" id="timer-display">00:00</div>
+  <div class="timer-controls">
+    <button onclick="timerStartPause()" id="timer-startpause" title="시작/일시정지">▶</button>
+    <button onclick="timerReset()" title="초기화">⟲</button>
+  </div>
+</div>
+<div class="timer-presets">
+  <button onclick="timerSet(1)">1분</button>
+  <button onclick="timerSet(5)">5분</button>
+  <button onclick="timerSet(10)">10분</button>
+  <button onclick="timerSet(15)">15분</button>
+  <button onclick="timerSet(20)">20분</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="wrap">
+
+  <!-- 역할 바: 수업 코드와 우리 조 표시 (조는 입장할 때 정함) -->
+  <div class="role-bar">
+    <span class="role-pill" id="role-pill">학생 화면</span>
+    <span class="room-info">수업 코드 <strong id="room-code-display">----</strong></span>
+    <span class="group-badge student-only" id="my-group-display"></span>
+    <span class="spacer"></span>
+    <button class="btn ghost small" onclick="leaveRoom()">나가기</button>
+  </div>
+
+  <div class="mode-note" id="mode-note" hidden></div>
+
+  <header>
+    <div class="case-no">사건번호 2026 — 형사 — 104 · 법과사회 수행 워크시트</div>
+    <h1>무죄가 나와도 억울한 이유</h1>
+    <div class="subtitle">형사 절차와 인권 보장 제도로 보는 사건 — 지식습득 · 지식활용 · 지식창출 (3차시)</div>
+  </header>
+
+  <!-- 교사 전용 패널 -->
+  <section class="teacher-panel teacher-only">
+    <h3>교사용 제어판</h3>
+    <p class="tp-note">여기서 바꾼 내용은 학생 화면에 바로 반영됩니다.</p>
+    <div class="tp-room">
+      <span class="tp-name">수업 코드</span>
+      <span class="big-code" id="tp-code">----</span>
+      <div class="tp-link">
+        <input type="text" id="share-link-input" readonly onclick="this.select()" aria-label="학생 접속 주소">
+        <button class="btn small" id="copy-link-btn">학생 링크 복사</button>
+      </div>
+    </div>
+    <div class="tp-switches">
+      <div class="tp-switch" id="tp-material">
+        <span class="tp-name">📖 학습자료</span>
+        <span class="tp-state" id="tp-material-state">잠김</span>
+        <button class="btn small" id="tp-material-btn" onclick="toggleMaterial()">열기</button>
+      </div>
+      <div class="tp-switch" id="tp-twist">
+        <span class="tp-name">＋ 반전 사례</span>
+        <span class="tp-state" id="tp-twist-state">잠김</span>
+        <button class="btn small plum" id="tp-twist-btn" onclick="toggleTwist()">열기</button>
+      </div>
+      <button class="btn ghost small" onclick="resetAll()" style="align-self:center;">수업 데이터 전체 초기화</button>
+    </div>
+    <div class="status-scroll">
+      <table class="status-table" id="status-table"></table>
+    </div>
+    <div class="tp-end">
+      <button class="btn danger small" onclick="endClass()">수업 종료 · 모든 기록 삭제</button>
+      <span class="tp-note" style="margin:0;">종료하면 이 수업 코드의 학생 입력이 서버에서 모두 지워지고, 학생 화면도 닫힙니다.</span>
+    </div>
+  </section>
+
+  <details class="case-brief" open>
+    <summary>사건 개요 열람 <span class="case-brief-tag">활동 시작 전 필독</span></summary>
+    <div class="case-brief-body">
+      <p>프로야구 스타 투수 김제혁은 어느 날 밤, 한 남성을 폭행해 크게 다치게 했다. 김제혁은 "그 남성이 여동생을 해치려 해서 막으려던 것"이라고 주장했다. 경찰은 곧바로 김제혁을 붙잡았고, 그날부터 김제혁의 수사와 재판이 시작되었다.</p>
+
+      <p>그런데 김제혁이 겪은 수사와 재판 과정은 다음과 같았다.</p>
+      <ul>
+        <li>경찰서에서 변호사를 불러 달라고 했지만 "일단 사실대로 말하면 빨리 끝난다"는 말만 들었고, 변호인 없이 밤새 조사를 받았다.</li>
+        <li>조사를 받기 전에 "묻는 말에 답하지 않아도 된다"는 설명은 한 번도 듣지 못했다. 피곤하고 겁이 난 김제혁은 시키는 대로 진술했다.</li>
+        <li>경찰은 판사가 허락한 영장 없이 김제혁의 집을 뒤져 가져간 물건들을 재판 증거로 제출했다.</li>
+        <li>판사 앞에서 구속이 꼭 필요한지 직접 이야기해 볼 기회도 없이 구치소에 갇혔다. 구속이 부당하다고 다퉈 볼 방법이나, 돈을 내고 풀려나 재판을 받을 방법은 아무도 알려 주지 않았다.</li>
+        <li>언론은 "여동생 핑계를 대던 폭행범 김제혁"이라고 보도했고, 재판이 끝나기도 전에 구단은 김제혁과의 계약을 해지했다. 김제혁은 판결이 나기도 전에 이미 유죄가 확정된 사람처럼 취급받았다.</li>
+      </ul>
+
+      <p>6개월 뒤 열린 1심 재판에서 법원은 김제혁의 행동이 여동생을 지키기 위한 정당방위라고 보아 <strong>무죄</strong>를 선고했다. 하지만 김제혁은 웃을 수 없었다. 무죄를 받기까지 6개월을 구치소에서 보냈고, 선수 생활도 계약도 명예도 이미 무너진 뒤였다. 김제혁은 이렇게 말했다. "나는 죄가 없다고 판결받았는데, 그 전까지 나는 죄인처럼 취급받았습니다."</p>
+
+      <div class="brief-question">김제혁은 왜 억울하다고 말할까?</div>
+      <span class="case-brief-source">※ 드라마 '슬기로운 감빵생활' 속 김제혁 사건을 수업용으로 각색한 사례입니다. (1·2차시와 같은 사건) 1심 무죄 판결과 수사·재판 과정의 인권 침해 상황은 형사 절차 학습을 위해 새로 구성한 가상의 설정이며 드라마의 내용과 다릅니다.</span>
+    </div>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-stage="1"><span class="tab-num">STAGE 1</span>지식습득</div>
+    <div class="tab" data-stage="2"><span class="tab-num">STAGE 2</span>지식활용</div>
+    <div class="tab" data-stage="3"><span class="tab-num">STAGE 3</span>지식창출</div>
+    <div class="tab tab-plus" data-stage="4" id="tab-plus" title="반전 사례"><span class="tab-num">반전 <span id="tab-plus-lock">🔒</span></span><span class="plus-mark">＋</span></div>
+  </div>
+
+  <!-- STAGE 1 -->
+  <section class="stage-panel" id="panel-1">
+    <div class="stimulus">
+      "이 사건은 범죄에 해당하는가?"
+      <small>사건 개요를 읽고, 우리 조의 판단을 하나만 고르세요. 선택하면 반 전체 결과가 바로 보입니다.</small>
+    </div>
+
+    <div class="student-only">
+      <div class="need-group" id="need-group-1" hidden>먼저 맨 위에서 우리 조 번호를 선택하세요.</div>
+      <div class="vote-row">
+        <button class="vote-btn yes" id="vote-yes" onclick="castVote('예')">예</button>
+        <button class="vote-btn no" id="vote-no" onclick="castVote('아니요')">아니요</button>
+      </div>
+    </div>
+
+    <div class="tally">
+      <div class="tally-col yes">
+        <h4><span>예</span><span id="tally-yes-n">0개 조</span></h4>
+        <div class="tally-bar"><i id="tally-yes-bar"></i></div>
+        <div class="tally-groups" id="tally-yes-groups"></div>
+      </div>
+      <div class="tally-col no">
+        <h4><span>아니요</span><span id="tally-no-n">0개 조</span></h4>
+        <div class="tally-bar"><i id="tally-no-bar"></i></div>
+        <div class="tally-groups" id="tally-no-groups"></div>
+      </div>
+    </div>
+
+    <div class="stimulus" style="margin-top:34px;">
+      "이 사람을 위해 어떤 제도가 필요할까?"
+      <small>김제혁이 수사와 재판 과정에서 겪은 일을 떠올리며, 우리 조의 생각을 작성해 공유하세요.</small>
+    </div>
+
+    <div class="write-box student-only">
+      <label for="idea-text">우리 조의 생각</label>
+      <textarea id="idea-text" placeholder="예) 조사를 받을 때 ... 하는 제도가 있었다면 ..."></textarea>
+      <div class="write-actions">
+        <button class="btn" onclick="submitIdea()">작성 완료 · 공유</button>
+        <span class="submit-state" id="state-idea"></span>
+      </div>
+    </div>
+
+    <div class="board-head"><span>조별 생각 모아보기</span><span class="live-dot">실시간 공유</span></div>
+    <div class="board" id="board-idea"></div>
+
+    <div class="study-host" id="study-host-1"></div>
+  </section>
+
+  <!-- STAGE 2 -->
+  <section class="stage-panel" id="panel-2" hidden>
+    <div class="stimulus">
+      "이 사람에게 어떤 제도를 추천할 수 있을까?"
+      <small>학습자료를 바탕으로 우리 조가 추천하는 제도를 고르고, 그 이유를 작성해 공유하세요. (여러 개 선택 가능)</small>
+    </div>
+
+    <div class="study-host" id="study-host-2" style="margin:0 0 22px;"></div>
+
+    <div class="write-box student-only">
+      <div class="need-group" id="need-group-2" hidden>먼저 맨 위에서 우리 조 번호를 선택하세요.</div>
+      <label>추천하는 제도</label>
+      <div class="chip-wrap" id="chip-wrap"></div>
+      <label for="sys-etc">그 밖에 추천하는 제도가 있다면 직접 입력 (선택)</label>
+      <input type="text" class="text-input" id="sys-etc" placeholder="예) 피해자를 위한 제도 등">
+      <label for="sys-reason">추천하는 이유</label>
+      <textarea id="sys-reason" placeholder="김제혁의 어떤 상황에서 이 제도가 필요한지, 이 제도가 있었다면 무엇이 달라졌을지 적어 보세요."></textarea>
+      <div class="write-actions">
+        <button class="btn" onclick="submitSystem()">작성 완료 · 공유</button>
+        <span class="submit-state" id="state-system"></span>
+      </div>
+    </div>
+
+    <div class="board-head"><span>조별 추천 제도 모아보기</span><span class="live-dot">실시간 공유</span></div>
+    <ul class="rank-list" id="rank-list"></ul>
+    <div class="board" id="board-system"></div>
+  </section>
+
+  <!-- STAGE 3 -->
+  <section class="stage-panel" id="panel-3" hidden>
+    <div class="stimulus">
+      "우리나라 형사 절차상의 인권 보장 제도는 어떻게 변화해야 할까?"
+      <small>김제혁 사건과 학습한 제도를 바탕으로, 우리 조의 의견을 작성해 공유하세요.</small>
+    </div>
+
+    <div class="write-box student-only">
+      <div class="need-group" id="need-group-3" hidden>먼저 맨 위에서 우리 조 번호를 선택하세요.</div>
+      <label for="reform-text">우리 조의 의견</label>
+      <textarea id="reform-text" style="min-height:120px;" placeholder="어떤 제도를 어떻게 바꾸거나 새로 만들어야 하는지, 그 이유와 함께 적어 보세요."></textarea>
+      <div class="write-actions">
+        <button class="btn" onclick="submitReform()">작성 완료 · 공유</button>
+        <span class="submit-state" id="state-reform"></span>
+      </div>
+    </div>
+
+    <div class="board-head"><span>조별 의견 모아보기</span><span class="live-dot">실시간 공유</span></div>
+    <div class="board" id="board-reform"></div>
+
+    <div class="study-host" id="study-host-3"></div>
+  </section>
+
+  <!-- ＋ 반전 -->
+  <section class="stage-panel plus-panel" id="panel-4" hidden>
+    <div class="plus-lock" id="plus-locked">
+      <strong>🔒 아직 열리지 않았어요</strong>
+      교사가 열어 주면 볼 수 있습니다.
+    </div>
+
+    <div id="plus-body" hidden>
+      <div class="teacher-banner teacher-only" id="plus-teacher-note">교사 미리보기입니다. 학생 화면에서는 아직 잠겨 있습니다. 위 교사용 제어판에서 열 수 있어요.</div>
+
+      <details class="case-brief plum" open>
+        <summary>반전 — 2심에서 밝혀진 진실 <span class="case-brief-tag">사건 그 후</span></summary>
+        <div class="case-brief-body">
+          <p>1심의 무죄 판결에 검사는 항소했고, 2심 재판이 시작되었다. 검사는 1심에서 확보하지 못했던 새로운 증거를 제출했다. 사건 당일 인근 상점의 CCTV 영상, 그리고 사건 전 김제혁이 그 남성의 퇴근 시간과 동선을 알아보던 메시지였다.</p>
+
+          <p>증거가 보여 준 진실은 달랐다. 그 남성은 여동생을 해치려던 것이 아니었고, 김제혁이 오래전부터 개인적인 원한을 품고 그 남성을 기다렸다가 일부러 크게 다치게 한 것이었다. 2심 법원은 정당방위를 인정하지 않고 김제혁에게 <strong>징역형의 유죄 판결</strong>을 선고했다.</p>
+
+          <p>문제는 그다음이었다. 피해 남성은 치료비로 수천만 원을 썼고, 후유증으로 직장까지 잃었다. 민사 재판에서 손해배상을 받을 수 있게 되었지만, 김제혁은 "돈이 없다. 법대로 하든 마음대로 하라"며 배상을 거부했다. 알고 보니 재산은 이미 가족 명의로 옮겨 둔 뒤였다. 가해자는 형을 선고받았지만, 피해자는 치료비도 생계도 보상받지 못한 채 홀로 남겨졌다. 피해자는 이렇게 말했다. "국가가 나를 위해 해 준 것은 아무것도 없습니다."</p>
+
+          <span class="case-brief-source">※ 이 반전 사례도 수업을 위해 새로 구성한 가상의 설정이며 드라마의 내용과 다릅니다.</span>
+        </div>
+      </details>
+
+      <div class="stimulus plum" style="margin-top:26px;">
+        "이런 상황에서 국가는 어떻게 해야 할까?"
+        <small>자신의 생각을 작성해 추가하세요. 작성한 대답은 모두에게 공유됩니다.</small>
+      </div>
+
+      <div class="write-box student-only">
+        <div class="need-group" id="need-group-4" hidden>먼저 맨 위에서 우리 조 번호를 선택하세요.</div>
+        <label for="twist-text">나의 대답</label>
+        <textarea id="twist-text" placeholder="국가가 무엇을, 왜 해야 하는지 적어 보세요."></textarea>
+        <div class="write-actions">
+          <button class="btn plum" onclick="addTwist()">대답 추가</button>
+        </div>
+      </div>
+
+      <div class="board-head"><span>대답 모아보기</span><span class="live-dot">실시간 공유</span></div>
+      <ul class="answer-list" id="board-twist"></ul>
+    </div>
+  </section>
+
+  <div class="footer-note">입력한 내용은 수업 코드 단위로만 저장되며, 수업이 끝나면 선생님이 삭제합니다 · 이름 등 개인정보는 수집하지 않습니다</div>
+</div>
+
+<!-- 학습자료 원본 (STAGE 1·2·3에서 같은 내용을 복제해 보여줍니다) -->
+<template id="tpl-study">
+  <details class="case-brief">
+    <summary>📖 학습자료 열람하기 — 형사 절차에서의 인권 보장 제도 <span class="case-brief-tag">교사가 열어 준 자료</span></summary>
+    <div class="case-brief-body">
+
+      <div class="info-subhead">1. 형사 절차에서의 인권 보호 원칙</div>
+      <table class="info-table">
+        <tr><th>적법 절차의<br>원리</th><td>
+          <div class="kv"><b>의미</b>공권력이 국민의 자유와 권리를 제한하는 경우 반드시 법률과 적법한 절차에 근거해야 한다는 원칙</div>
+          <div class="kv"><b>조항</b>헌법 제12조① 모든 국민은 신체의 자유를 가진다. 누구든지 법률에 의하지 아니하고는 체포·구속·압수·수색 또는 심문을 받지 아니하며, 법률과 적법한 절차에 의하지 아니하고는 처벌·보안처분 또는 강제 노역을 받지 아니한다.</div>
+        </td></tr>
+        <tr><th>무죄 추정의<br>원칙</th><td>
+          <div class="kv"><b>의미</b>형사 피의자와 피고인은 유죄 판결이 확정될 때까지는 무죄로 추정한다는 원칙</div>
+          <div class="kv"><b>원칙</b>① 유죄 입증 책임: 수사 기관 ② 수사 및 재판은 불구속 상태 진행이 원칙</div>
+        </td></tr>
+        <tr><th>진술 거부권</th><td>
+          <div class="kv"><b>의미</b>피의자나 피고인이 수사 및 재판(공판) 절차에서 불리한 진술을 강요당하지 않을 권리</div>
+          <div class="kv"><b>원칙</b>수사 기관과 법원은 각각 피의자, 피고인에게 진술 거부권을 고지할 의무가 있음. 고지하지 않은 경우 증거 능력 인정 X</div>
+        </td></tr>
+        <tr><th>변호인의 조력을<br>받을 권리</th><td>
+          <div class="kv"><b>의미</b>피의자나 피고인이 수사 기관과 대등한 관계에서 자신을 방어할 수 있도록 헌법이 변호인의 조력을 받을 권리를 보장</div>
+          <div class="kv"><b>특징</b>① 수사 단계에서 형사 재판(공판) 절차에 이르기까지 인정 ② 국선 변호인 제도 — 구속 전 피의자 심문에서 심문할 피의자에게 변호인이 없는 경우 또는 형사 피고인이 스스로 변호인을 선임할 수 없는 경우 등은 법률의 규정에 의하여 국가가 국선 변호인 선임</div>
+        </td></tr>
+      </table>
+
+      <div class="info-subhead">2. 수사 절차에서의 제도</div>
+      <table class="info-table">
+        <tr><th>영장 제도</th><td>
+          <ol>
+            <li>피의자에 대한 체포·구속·압수·수색 시 검사의 청구에 의해 판사(법관)가 발부한 영장이 필요함</li>
+            <li>수사상 강제 처분에 대한 사법적 통제를 통해 국민의 인권을 보장하기 위함</li>
+            <li>예외적으로 긴급체포 가능 — 긴급을 요하는 경우, 중대한 범죄에 한해 가능</li>
+          </ol>
+        </td></tr>
+        <tr><th>구속 전<br>피의자 심문제도</th><td>"구속 영장 실질 심사" — 검사가 피의자에 대한 구속 영장을 청구하면 판사가 피의자를 직접 대면하여 심문하면서 구속 사유가 인정되는지를 판단하는 제도</td></tr>
+        <tr><th>체포·구속<br>적부 심사제도</th><td>체포나 구속을 당한 피의자가 체포나 구속의 적법성과 필요성을 심사하여 자신을 석방해 줄 것을 법원에 청구하는 제도</td></tr>
+        <tr><th>그 외</th><td>진술 거부권(묵비권), 변호인의 조력을 받을 권리</td></tr>
+      </table>
+
+      <div class="info-subhead">3. 재판 절차에서의 제도</div>
+      <table class="info-table">
+        <tr><th>보석 제도</th><td>보증금 납입 등을 조건으로 법원이 구속의 집행을 정지함으로써 구속된 피고인이 석방되는 제도</td></tr>
+        <tr><th>증거 재판주의</th><td>
+          <ol>
+            <li>사실의 인정은 증거에 의하여 한다는 원칙</li>
+            <li>사실 인정의 합리성을 도모함으로써 형벌권의 적정한 실현이라는 목적을 달성하기 위함</li>
+            <li>위법한 절차에 의하여 수집한 증거의 증거 능력 부정</li>
+          </ol>
+        </td></tr>
+        <tr><th>상소 제도</th><td>피고인이 판결에 불복할 때에는 상소를 통해 상급 법원에서 다시 재판을 받을 수 있음</td></tr>
+        <tr><th>재심 제도</th><td>
+          <ol>
+            <li>확정된 판결이라도 재판에 중대한 오류가 있을 경우에는 이를 바로잡을 수 있는 제도</li>
+            <li>유죄 판결이 확정된 자의 이익을 위하여 판결의 부당함을 시정하기 위함</li>
+          </ol>
+        </td></tr>
+      </table>
+
+      <span class="case-brief-source">※ 법과사회 학습지(형사 절차에서의 인권 보장 제도)를 바탕으로 정리했습니다.</span>
+    </div>
+  </details>
+</template>
+
+</div><!-- /app-screen -->
+
+<!-- Firebase (여러 기기 실시간 공유 · 교사 로그인) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+  /* =========================================================
+   * 설정
+   * ========================================================= */
+  const GROUP_COUNT = 5;            // 조 개수 (필요하면 숫자만 바꾸세요. 9조까지 가능)
+  const SYSTEMS = [
+    '적법 절차의 원리','무죄 추정의 원칙','진술 거부권','변호인의 조력을 받을 권리',
+    '영장 제도','구속 전 피의자 심문제도','체포·구속 적부 심사제도',
+    '보석 제도','증거 재판주의','상소 제도','재심 제도'
+  ];
+
+  /* Firebase 콘솔 > 프로젝트 설정 > 내 앱 에 나오는 값 (1차시와 같은 프로젝트) */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCdXEv10L0yhHRWmx8TxtXoN7oS1emtYi0",
+    authDomain: "no-penalty-without-a-law.firebaseapp.com",
+    databaseURL: "https://no-penalty-without-a-law-default-rtdb.firebaseio.com",
+    projectId: "no-penalty-without-a-law",
+    storageBucket: "no-penalty-without-a-law.firebasestorage.app",
+    messagingSenderId: "878772318049",
+    appId: "1:878772318049:web:1aefb1b2a3c18f0c465f20"
+  };
+
+  /* =========================================================
+   * 서버 연결부 (Backend)
+   * 3차시 기록은 Firebase 안의 'law3' 칸에만 저장합니다. (1차시 'rooms' 칸과 분리)
+   *   law3/rooms/{수업코드}/meta   : 만든 시각, 만든 교사      ← 교사만 쓰기
+   *   law3/rooms/{수업코드}/ctrl   : 학습자료·반전 공개, 타이머 ← 교사만 쓰기
+   *   law3/rooms/{수업코드}/...    : 조별 기록 (다음 단계에서 연결)
+   *   law3/teacher                 : 교사 전용 (내 수업 목록 등) ← 교사만 읽기·쓰기
+   * 교사인지는 Firebase 보안 규칙(서버)이 구글 계정 고유번호로 확인합니다.
+   *
+   * 주소 끝에 ?practice=1 을 붙이거나 파일을 더블클릭해 열면 '연습 모드'로,
+   * 인터넷 없이 이 컴퓨터의 같은 브라우저 창끼리만 공유됩니다.
+   * ========================================================= */
+  const params = new URLSearchParams(location.search);
+
+  function withTimeout(promise, ms){
+    return Promise.race([
+      promise,
+      new Promise((_, reject)=>setTimeout(()=>reject(new Error('연결 시간 초과')), ms))
+    ]);
+  }
+  function setPath(obj, path, value){
+    const parts = path.split('/');
+    let o = obj;
+    for(let i=0;i<parts.length-1;i++){
+      if(typeof o[parts[i]]!=='object' || o[parts[i]]===null) o[parts[i]] = {};
+      o = o[parts[i]];
+    }
+    const last = parts[parts.length-1];
+    if(value===null) delete o[last]; else o[last] = value;
+  }
+  function isDenied(e){
+    return !!e && (e.code==='PERMISSION_DENIED' || /permission[_ ]denied/i.test(e.message||''));
+  }
+
+  const LocalBackend = {
+    mode:'practice',
+    _key(code){ return 'law3p_room_'+code; },
+    _read(code){ try{ return JSON.parse(localStorage.getItem(this._key(code))); }catch(e){ return null; } },
+    _subs:[],
+    _ping(){ this._subs.forEach(f=>f()); },
+    init(){},
+    now(){ return Date.now(); },
+    newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); },
+    onAuth(cb){ cb(null); },
+    async roomMeta(code){ const o = this._read(code); return o ? (o.meta || null) : null; },
+    async createRoom(code, data){ localStorage.setItem(this._key(code), JSON.stringify(data)); this._ping(); },
+    async deleteRoom(code){ localStorage.removeItem(this._key(code)); this._ping(); },
+    // updates: { '경로/경로': 값 }  (값이 null이면 삭제)
+    async update(code, updates){
+      const obj = this._read(code);
+      if(!obj) return;
+      Object.keys(updates).forEach(p=>setPath(obj, p, updates[p]));
+      localStorage.setItem(this._key(code), JSON.stringify(obj));
+      this._ping();
+    },
+    subscribe(code, cb){
+      let last;
+      const check = ()=>{
+        const raw = localStorage.getItem(this._key(code));
+        if(raw===last) return;
+        last = raw;
+        let val = null;
+        try{ val = raw ? JSON.parse(raw) : null; }catch(e){}
+        cb(val);
+      };
+      this._subs.push(check);
+      window.addEventListener('storage', check);
+      const iv = setInterval(check, 700);
+      check();
+      return ()=>{ window.removeEventListener('storage', check); clearInterval(iv); this._subs = this._subs.filter(f=>f!==check); };
+    },
+    _myKey:'law3p_teacher_rooms',
+    async myRooms(){ try{ return JSON.parse(localStorage.getItem(this._myKey)) || {}; }catch(e){ return {}; } },
+    async addMyRoom(code, ts){ const m = await this.myRooms(); m[code] = ts; localStorage.setItem(this._myKey, JSON.stringify(m)); },
+    async removeMyRoom(code){ const m = await this.myRooms(); delete m[code]; localStorage.setItem(this._myKey, JSON.stringify(m)); }
+  };
+
+  const FirebaseBackend = {
+    mode:'firebase',
+    _offset:0,   // 이 기기 시계와 서버 시계의 차이 (타이머를 모든 기기에서 똑같이 맞추는 데 사용)
+    user:null,
+    init(){
+      firebase.initializeApp(firebaseConfig);
+      this.db = firebase.database();
+      this.auth = firebase.auth();
+      this.db.ref('.info/serverTimeOffset').on('value', s=>{ this._offset = s.val() || 0; });
+      this.db.ref('.info/connected').on('value', s=>onConnection(!!s.val()));
+    },
+    _room(code){ return this.db.ref('law3/rooms/'+code); },
+    now(){ return Date.now() + this._offset; },
+    newId(){ return this.db.ref().push().key; },
+    onAuth(cb){ this.auth.onAuthStateChanged(u=>{ this.user = u; cb(u); }); },
+    async signIn(){
+      const p = new firebase.auth.GoogleAuthProvider();
+      p.setCustomParameters({prompt:'select_account'});
+      await this.auth.signInWithPopup(p);
+    },
+    async signOut(){ await this.auth.signOut(); },
+    // 서버의 교사 전용 칸을 읽어 보고, 허락되면 교사
+    async isTeacher(){
+      try{ await withTimeout(this.db.ref('law3/teacher').once('value'), 10000); return true; }
+      catch(e){ if(isDenied(e)) return false; throw e; }
+    },
+    async roomMeta(code){
+      const snap = await withTimeout(this._room(code).child('meta').once('value'), 10000);
+      return snap.val();
+    },
+    async createRoom(code, data){ await withTimeout(this._room(code).set(data), 10000); },
+    async deleteRoom(code){ await withTimeout(this._room(code).remove(), 10000); },
+    async update(code, updates){ await this._room(code).update(updates); },
+    subscribe(code, cb){
+      const ref = this._room(code);
+      const h = ref.on('value', s=>cb(s.val()), e=>{
+        console.error(e);
+        toast('수업 내용을 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
+      });
+      return ()=>ref.off('value', h);
+    },
+    async myRooms(){
+      const s = await withTimeout(this.db.ref('law3/teacher/rooms').once('value'), 10000);
+      return s.val() || {};
+    },
+    async addMyRoom(code, ts){ await withTimeout(this.db.ref('law3/teacher/rooms/'+code).set(ts), 10000); },
+    async removeMyRoom(code){ await withTimeout(this.db.ref('law3/teacher/rooms/'+code).remove(), 10000); }
+  };
+
+  let everConnected = false;
+  let backend = LocalBackend;
+  const wantPractice = params.has('practice') || location.protocol==='file:';
+  if(!wantPractice && window.firebase){
+    try{ FirebaseBackend.init(); backend = FirebaseBackend; }
+    catch(e){ console.error(e); }
+  }
+  const PRACTICE = backend.mode==='practice';
+
+  // 인터넷 연결 상태 표시
+  function onConnection(connected){
+    const note = document.getElementById('mode-note');
+    if(connected){ everConnected = true; note.hidden = true; return; }
+    if(everConnected){
+      note.textContent = '인터넷 연결이 끊겼습니다. 다시 연결되면 자동으로 이어집니다.';
+      note.hidden = false;
+    }
+  }
+
+  /* =========================================================
+   * 공유 저장소 (Store) — 화면 코드가 쓰는 부분
+   * ※ ② 단계: 아직 원래처럼 이 컴퓨터 안(localStorage)에서만 공유됩니다.
+   *   ④ 단계에서 이 Store를 위 서버(backend)와 연결합니다.
+   *
+   * 공유 데이터 모양(S):
+   *   materialOpen : 학습자료 공개 여부 (교사가 바꿈)
+   *   twistOpen    : ＋반전 사례 공개 여부 (교사가 바꿈)
+   *   vote   : { '조번호': '예' | '아니요' }
+   *   ideas  : { '조번호': { text, ts } }               ← STAGE 1 생각
+   *   systems: { '조번호': { picks:[], etc, reason, ts } } ← STAGE 2 추천
+   *   reform : { '조번호': { text, ts } }               ← STAGE 3 의견
+   *   twist  : [ { id, group, text, ts } ]              ← ＋반전 대답
+   * ========================================================= */
+  let STORE_KEY = 'law3_shared_v1';
+  const Store = {
+    mem: null,
+    empty(){
+      return {materialOpen:false, twistOpen:false, vote:{}, ideas:{}, systems:{}, reform:{}, twist:[], rev:0};
+    },
+    read(){
+      try{
+        const raw = localStorage.getItem(STORE_KEY);
+        if(raw) return Object.assign(this.empty(), JSON.parse(raw));
+      }catch(e){}
+      return this.mem ? this.mem : this.empty();
+    },
+    write(d){
+      this.mem = d;
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }catch(e){}
+    },
+    update(fn){
+      const d = this.read();
+      fn(d);
+      d.rev = (d.rev||0) + 1;
+      this.write(d);
+      return d;
+    }
+  };
+
+  let S = Store.empty();
+  let lastRaw = null;
+  function rawNow(){ try{ return localStorage.getItem(STORE_KEY); }catch(e){ return null; } }
+
+  function commit(fn){
+    S = Store.update(fn);
+    lastRaw = rawNow();
+    renderShared();
+  }
+  function syncFromStore(){
+    if(!ROOM) return;
+    const raw = rawNow();
+    if(raw === lastRaw) return;
+    lastRaw = raw;
+    S = Store.read();
+    renderShared();
+  }
+  window.addEventListener('storage', e=>{ if(e.key===STORE_KEY) syncFromStore(); });
+  setInterval(syncFromStore, 1500);   // storage 이벤트를 놓쳤을 때를 대비한 보조 확인
+
+  /* =========================================================
+   * 이 기기의 정보: 수업 코드, 역할, 조 번호
+   * ========================================================= */
+  let ROOM = null;                       // 수업 코드 (4자리 숫자)
+  let room = null;                       // 서버에 있는 수업 전체 내용 (실시간으로 갱신)
+  let unsubscribe = null;
+  let me = {role:'student', group:''};
+  const isTeacher = ()=> me.role==='teacher';
+  const SESSION_KEY = 'law3_session';
+
+  /* =========================================================
+   * 공통 도우미
+   * ========================================================= */
+  const $ = id => document.getElementById(id);
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  let toastTimer = null;
+  function toast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+  }
+  function storeError(e){
+    console.error(e);
+    toast(isDenied(e) ? '권한이 없어 저장하지 못했습니다.' : '저장에 실패했습니다. 인터넷 연결을 확인해주세요.');
+  }
+  function groupsOf(obj){ return Object.keys(obj).sort((a,b)=>Number(a)-Number(b)); }
+  function cardHtml(g, inner){
+    const mine = String(g)===String(me.group);
+    return `<div class="share-card ${mine?'mine':''}">
+      <div class="share-head"><span class="group-badge">${escapeHtml(g)}조</span>${mine?'<span class="mine-tag">우리 조</span>':''}</div>
+      ${inner}
+    </div>`;
+  }
+  function needGroup(stage){
+    if(me.group){ return true; }
+    const el = $('need-group-'+stage);
+    if(el) el.hidden = false;
+    toast('학생 화면에서 조를 정해 입장해야 작성할 수 있습니다.');
+    return false;
+  }
+  function copyText(input, btn){
+    const done = ()=>{ const t = btn.textContent; btn.textContent = '복사됨!'; setTimeout(()=>{ btn.textContent = t; }, 1500); };
+    input.select();
+    input.setSelectionRange(0, 99999);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(input.value).then(done).catch(()=>{ document.execCommand('copy'); done(); });
+    } else { document.execCommand('copy'); done(); }
+  }
+  function pageBase(){ return location.href.split('#')[0].split('?')[0]; }
+  function practiceSuffix(){ return params.has('practice') ? '&practice=1' : ''; }
+  function setUrl(code, asTeacher){
+    try{
+      const url = new URL(location.href);
+      if(code) url.searchParams.set('code', code); else url.searchParams.delete('code');
+      if(asTeacher) url.searchParams.set('role','teacher'); else url.searchParams.delete('role');
+      history.replaceState(null,'',url);
+    }catch(e){ /* 일부 환경에서는 주소 변경이 막혀 있어도 동작에는 문제 없음 */ }
+  }
+
+  /* =========================================================
+   * 입장 화면
+   * ========================================================= */
+  const gateScreen = $('gate-screen');
+  const appScreen = $('app-screen');
+  function showGateError(msg){ $('gate-error').textContent = msg; $('gate-error').hidden = false; }
+  function hideGateError(){ $('gate-error').hidden = true; }
+
+  (function buildGroupSelect(){
+    $('gate-group-select').innerHTML = '<option value="">조 선택</option>' +
+      Array.from({length:GROUP_COUNT}, (_,i)=>`<option value="${i+1}">${i+1}조</option>`).join('');
+  })();
+
+  // ---- 교사: 로그인 상태에 따라 교사 카드 바꾸기 ----
+  let teacherOk = false;
+  function showTeacherCard(which){
+    ['signedout','ok','denied','practice'].forEach(k=>{ $('gate-t-'+k).hidden = (k!==which); });
+  }
+  function authErrorMessage(e){
+    const c = (e && e.code) || '';
+    if(c==='auth/popup-closed-by-user' || c==='auth/cancelled-popup-request') return '';
+    if(c==='auth/popup-blocked') return '로그인 창이 차단되었습니다. 주소창 오른쪽의 팝업 차단 표시를 눌러 허용한 뒤 다시 눌러주세요.';
+    if(c==='auth/unauthorized-domain') return '이 주소는 Firebase 로그인 허용 목록에 없습니다. (안내의 "승인된 도메인" 단계를 확인해주세요)';
+    if(c==='auth/operation-not-allowed') return 'Firebase에서 Google 로그인이 아직 켜져 있지 않습니다. (안내의 "Google 로그인 사용 설정" 단계를 확인해주세요)';
+    return '로그인하지 못했습니다. ('+((e && e.message) || c)+')';
+  }
+  async function teacherLogin(){
+    hideGateError();
+    try{ await backend.signIn(); }
+    catch(e){ const m = authErrorMessage(e); if(m) showGateError(m); }
+  }
+  async function teacherLogout(){
+    try{ await backend.signOut(); }catch(e){ console.error(e); }
+  }
+  async function onAuthChanged(user){
+    teacherOk = false;
+    if(PRACTICE){
+      showTeacherCard('practice'); teacherOk = true;
+      await renderGateTeacherRooms();
+      const pc = (params.get('code')||'').trim();
+      if(!ROOM && params.get('role')==='teacher' && (await backend.myRooms())[pc] && (await backend.roomMeta(pc))){
+        enterRoom(pc, 'teacher', '');
+      }
+      return;
+    }
+    if(!user){ showTeacherCard('signedout'); return; }
+    try{
+      teacherOk = await backend.isTeacher();
+    }catch(e){
+      console.error(e);
+      showGateError('서버에 연결하지 못했습니다. 인터넷 연결을 확인해주세요. ('+e.message+')');
+      showTeacherCard('signedout');
+      return;
+    }
+    if(!teacherOk){
+      $('gate-uid').value = user.uid;
+      showTeacherCard('denied');
+      return;
+    }
+    $('gate-t-user').innerHTML = '<strong>교사 확인됨</strong> · ' + escapeHtml(user.email || '');
+    showTeacherCard('ok');
+    await renderGateTeacherRooms();
+    // 새로고침했을 때 교사 화면으로 바로 돌아가기
+    const code = (params.get('code')||'').trim();
+    if(!ROOM && params.get('role')==='teacher' && /^\d{4}$/.test(code)){
+      try{
+        const meta = await backend.roomMeta(code);
+        if(meta && meta.owner===user.uid) enterRoom(code, 'teacher', '');
+      }catch(e){ console.error(e); }
+    }
+  }
+
+  // ---- 교사: 새 수업 만들기 ----
+  async function createRoom(){
+    hideGateError();
+    if(!teacherOk){ showGateError('교사 로그인이 필요합니다.'); return; }
+    try{
+      let code = null;
+      for(let i=0;i<30;i++){
+        const c = String(Math.floor(1000+Math.random()*9000));
+        if(!(await backend.roomMeta(c))){ code = c; break; }
+      }
+      if(!code){ showGateError('수업 코드를 만들지 못했습니다. 다시 시도해주세요.'); return; }
+      const now = backend.now();
+      await backend.createRoom(code, {
+        meta:{createdAt:now, owner: PRACTICE ? 'practice' : backend.user.uid},
+        ctrl:{materialOpen:false, twistOpen:false, timer:{seconds:0, running:false, endTime:0, done:false}}
+      });
+      await backend.addMyRoom(code, now);
+      setUrl(code, true);
+      enterRoom(code, 'teacher', '');
+    }catch(e){
+      console.error(e);
+      showGateError(isDenied(e)
+        ? '서버가 수업 만들기를 허락하지 않았습니다. Firebase 보안 규칙에 교사 고유번호가 바르게 들어갔는지 확인해주세요.'
+        : '수업을 만들지 못했습니다. ('+e.message+')');
+    }
+  }
+
+  // ---- 교사: 진행 중인 내 수업 (24시간 지난 수업은 자동 삭제) ----
+  async function renderGateTeacherRooms(){
+    const box = PRACTICE ? $('gate-my-rooms-p') : $('gate-my-rooms');
+    const alive = [];
+    try{
+      const mine = await backend.myRooms();
+      for(const c of Object.keys(mine)){
+        const meta = await backend.roomMeta(c);
+        if(!meta){ await backend.removeMyRoom(c); continue; }
+        if(meta.createdAt && backend.now() - meta.createdAt > 24*60*60*1000){
+          await backend.deleteRoom(c);
+          await backend.removeMyRoom(c);
+          continue;
+        }
+        alive.push(c);
+      }
+    }catch(e){ console.error(e); }
+    box.hidden = alive.length===0;
+    box.innerHTML = alive.length ? '진행 중인 내 수업: ' + alive.map(c=>
+      `<button class="btn ghost small" onclick="reenterAsTeacher('${c}')">${c} 다시 들어가기</button>`).join(' ') : '';
+  }
+  async function reenterAsTeacher(code){
+    hideGateError();
+    try{
+      const meta = await backend.roomMeta(code);
+      if(!meta){ showGateError('이미 종료된 수업입니다.'); renderGateTeacherRooms(); return; }
+      setUrl(code, true);
+      enterRoom(code, 'teacher', '');
+    }catch(e){ showGateError('수업에 들어가지 못했습니다. ('+e.message+')'); }
+  }
+
+  // ---- 학생: 코드와 조로 입장 ----
+  async function joinRoom(){
+    hideGateError();
+    const code = $('gate-code-input').value.trim();
+    const group = $('gate-group-select').value;
+    if(!/^\d{4}$/.test(code)){ showGateError('수업 코드 4자리 숫자를 입력해주세요.'); return; }
+    if(!group){ showGateError('우리 조를 선택해주세요.'); return; }
+    try{
+      if(!(await backend.roomMeta(code))){ showGateError('없는 수업 코드입니다. 선생님께 코드를 다시 확인해주세요.'); return; }
+      try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify({code, group})); }catch(e){}
+      setUrl(code, false);
+      enterRoom(code, 'student', group);
+    }catch(e){
+      console.error(e);
+      showGateError('접속하지 못했습니다. 인터넷 연결을 확인해주세요. ('+e.message+')');
+    }
+  }
+
+  $('gate-join-btn').addEventListener('click', joinRoom);
+  ['gate-code-input','gate-group-select'].forEach(id=>{
+    $(id).addEventListener('keydown', e=>{ if(e.key==='Enter') joinRoom(); });
+  });
+  $('gate-login-btn').addEventListener('click', teacherLogin);
+  $('gate-logout-btn').addEventListener('click', teacherLogout);
+  $('gate-logout-btn2').addEventListener('click', teacherLogout);
+  $('gate-create-btn').addEventListener('click', createRoom);
+  $('gate-practice-btn').addEventListener('click', createRoom);
+  $('gate-uid-copy').addEventListener('click', ()=>copyText($('gate-uid'), $('gate-uid-copy')));
+
+  /* =========================================================
+   * 수업 화면 들어가기 / 나가기 / 종료
+   * ========================================================= */
+  function enterRoom(code, role, group){
+    if(ROOM) return;
+    ROOM = code;
+    me = {role, group: group||''};
+    gateScreen.hidden = true;
+    appScreen.hidden = false;
+    hideGateError();
+
+    $('room-code-display').textContent = code;
+    $('my-group-display').textContent = me.group ? me.group+'조' : '';
+    $('my-group-display').hidden = !me.group;
+    $('tp-code').textContent = code;
+    $('share-link-input').value = pageBase() + '?code=' + code + practiceSuffix();
+
+    // ② 단계 임시: 내용 공유는 아직 이 컴퓨터 안에서만 (수업 코드별로 나눠 저장)
+    STORE_KEY = 'law3_shared_v1_' + code;
+    S = Store.read();
+    lastRaw = rawNow();
+
+    applyRole();
+    prefillForms(true);
+    unsubscribe = backend.subscribe(code, onRoom);
+  }
+
+  function onRoom(snap){
+    if(!snap){
+      if(room){
+        // 교사가 수업을 종료(삭제)한 경우
+        room = null;
+        backToGate('수업이 종료되어 기록이 삭제되었습니다.');
+      } else {
+        backToGate('없는 수업 코드입니다.');
+      }
+      return;
+    }
+    room = snap;
+  }
+
+  function backToGate(msg){
+    if(unsubscribe){ unsubscribe(); unsubscribe = null; }
+    try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+    ROOM = null; room = null;
+    me = {role:'student', group:''};
+    document.body.classList.remove('is-teacher');
+    appScreen.hidden = true;
+    gateScreen.hidden = false;
+    setUrl(null, false);
+    if(msg) showGateError(msg);
+    if(teacherOk) renderGateTeacherRooms();
+  }
+
+  function leaveRoom(){ backToGate(''); }
+
+  // 교사: 수업 종료 (이 수업 코드의 기록을 서버에서 모두 삭제)
+  async function endClass(){
+    if(!isTeacher()) return;
+    if(!confirm('수업을 종료하고 이 수업 코드('+ROOM+')의 모든 기록을 삭제할까요?\n학생 화면도 모두 닫히고, 삭제한 뒤에는 되돌릴 수 없습니다.')) return;
+    const code = ROOM;
+    try{
+      await backend.deleteRoom(code);
+      await backend.removeMyRoom(code);
+      try{ localStorage.removeItem('law3_shared_v1_'+code); }catch(e){}
+      room = null;
+      backToGate('');
+      toast('수업을 종료하고 기록을 삭제했습니다.');
+    }catch(e){ storeError(e); }
+  }
+
+  $('copy-link-btn').addEventListener('click', ()=>copyText($('share-link-input'), $('copy-link-btn')));
+
+  /* =========================================================
+   * 탭 전환
+   * ========================================================= */
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      [1,2,3,4].forEach(n=>{
+        $('panel-'+n).hidden = (String(n) !== tab.dataset.stage);
+      });
+    });
+  });
+
+  function applyRole(){
+    document.body.classList.toggle('is-teacher', isTeacher());
+    $('role-pill').textContent = isTeacher() ? '교사 화면' : '학생 화면';
+    lastStudyOpen = null;
+    renderShared();
+  }
+
+  /* =========================================================
+   * 교사 제어
+   * ========================================================= */
+  function toggleMaterial(){ if(!isTeacher()) return; commit(d=>{ d.materialOpen = !d.materialOpen; }); }
+  function toggleTwist(){ if(!isTeacher()) return; commit(d=>{ d.twistOpen = !d.twistOpen; }); }
+  function resetAll(){
+    if(!isTeacher()) return;
+    if(!confirm('조별로 작성한 내용과 투표, 학습자료·반전 공개 상태를 모두 지웁니다. 계속할까요?')) return;
+    commit(d=>{ Object.assign(d, Store.empty(), {rev:d.rev}); });
+    ['idea-text','sys-reason','sys-etc','reform-text','twist-text'].forEach(id=>{ $(id).value=''; });
+    selPicks = [];
+    renderChips();
+    toast('수업 데이터를 모두 초기화했습니다.');
+  }
+
+  /* =========================================================
+   * STAGE 1 — 예/아니요 + 필요한 제도
+   * ========================================================= */
+  function castVote(v){
+    if(!needGroup(1)) return;
+    commit(d=>{ d.vote[me.group] = v; });
+  }
+  function submitIdea(){
+    if(!needGroup(1)) return;
+    const text = $('idea-text').value.trim();
+    if(!text){ toast('내용을 작성한 뒤 공유하세요.'); return; }
+    commit(d=>{ d.ideas[me.group] = {text, ts:Date.now()}; });
+    toast(me.group+'조의 생각이 공유되었습니다.');
+  }
+
+  /* =========================================================
+   * STAGE 2 — 추천 제도 + 이유
+   * ========================================================= */
+  let selPicks = [];
+  function renderChips(){
+    $('chip-wrap').innerHTML = SYSTEMS.map((name,i)=>
+      `<button type="button" class="chip ${selPicks.includes(name)?'on':''}" onclick="togglePick(${i})">${escapeHtml(name)}</button>`
+    ).join('');
+  }
+  function togglePick(i){
+    const name = SYSTEMS[i];
+    selPicks = selPicks.includes(name) ? selPicks.filter(x=>x!==name) : selPicks.concat(name);
+    renderChips();
+  }
+  function submitSystem(){
+    if(!needGroup(2)) return;
+    const etc = $('sys-etc').value.trim();
+    const reason = $('sys-reason').value.trim();
+    if(selPicks.length===0 && !etc){ toast('추천하는 제도를 하나 이상 선택하세요.'); return; }
+    if(!reason){ toast('추천하는 이유를 작성하세요.'); return; }
+    const picks = selPicks.slice();
+    commit(d=>{ d.systems[me.group] = {picks, etc, reason, ts:Date.now()}; });
+    toast(me.group+'조의 추천이 공유되었습니다.');
+  }
+
+  /* =========================================================
+   * STAGE 3 — 변화 의견
+   * ========================================================= */
+  function submitReform(){
+    if(!needGroup(3)) return;
+    const text = $('reform-text').value.trim();
+    if(!text){ toast('내용을 작성한 뒤 공유하세요.'); return; }
+    commit(d=>{ d.reform[me.group] = {text, ts:Date.now()}; });
+    toast(me.group+'조의 의견이 공유되었습니다.');
+  }
+
+  /* =========================================================
+   * ＋ 반전 — 대답 추가
+   * ========================================================= */
+  function addTwist(){
+    if(!needGroup(4)) return;
+    const text = $('twist-text').value.trim();
+    if(!text){ toast('대답을 작성한 뒤 추가하세요.'); return; }
+    commit(d=>{ d.twist.push({id:Date.now()+'-'+Math.random().toString(36).slice(2,6), group:me.group, text, ts:Date.now()}); });
+    $('twist-text').value = '';
+  }
+  function delTwist(id){
+    commit(d=>{ d.twist = d.twist.filter(a=>!(a.id===id && String(a.group)===String(me.group))); });
+  }
+
+  /* =========================================================
+   * 화면 그리기
+   * ========================================================= */
+  // 내 조가 이미 제출한 내용을 입력칸에 채워 줌 (입력 중인 내용은 지우지 않음)
+  function prefillForms(force){
+    const g = me.group;
+    if(!g) return;
+    const fill = (id, val)=>{ const el=$(id); if(el && val!==undefined && (force || !el.value)) el.value = val; };
+    if(S.ideas[g]) fill('idea-text', S.ideas[g].text);
+    if(S.reform[g]) fill('reform-text', S.reform[g].text);
+    if(S.systems[g]){
+      fill('sys-reason', S.systems[g].reason);
+      fill('sys-etc', S.systems[g].etc || '');
+      if(force || selPicks.length===0){ selPicks = S.systems[g].picks.slice(); renderChips(); }
+    }
+  }
+
+  let lastStudyOpen = null;
+  function renderStudy(){
+    const open = !!S.materialOpen || isTeacher();
+    if(open === lastStudyOpen) return;       // 상태가 바뀔 때만 다시 그림 (펼침 상태 유지)
+    const wasLocked = (lastStudyOpen === false);
+    lastStudyOpen = open;
+    [1,2,3].forEach(n=>{
+      const host = $('study-host-'+n);
+      if(!host) return;
+      host.innerHTML = '';
+      if(open){
+        const node = $('tpl-study').content.cloneNode(true);
+        host.appendChild(node);
+        if(n===1 && wasLocked && !isTeacher()) host.querySelector('details').open = true;
+      } else {
+        host.innerHTML = '<div class="study-locked">🔒 학습자료는 교사가 열어 주면 볼 수 있어요.</div>';
+      }
+    });
+    if(open && wasLocked && !isTeacher()) toast('교사가 학습자료를 열었어요 📖');
+  }
+
+  let lastTwistOpen = null;
+  function renderTwistGate(){
+    const open = !!S.twistOpen || isTeacher();
+    $('plus-locked').hidden = open;
+    $('plus-body').hidden = !open;
+    $('plus-teacher-note').hidden = !(isTeacher() && !S.twistOpen);
+    $('tab-plus-lock').textContent = open ? '' : '🔒';
+    if(lastTwistOpen === false && open && !isTeacher()) toast('＋ 반전 사례가 열렸어요');
+    lastTwistOpen = open;
+  }
+
+  function renderVote(){
+    const myVote = me.group ? S.vote[me.group] : null;
+    $('vote-yes').classList.toggle('on', myVote==='예');
+    $('vote-no').classList.toggle('on', myVote==='아니요');
+    const gs = groupsOf(S.vote);
+    const yes = gs.filter(g=>S.vote[g]==='예');
+    const no  = gs.filter(g=>S.vote[g]==='아니요');
+    const total = Math.max(yes.length+no.length, 1);
+    $('tally-yes-n').textContent = yes.length+'개 조';
+    $('tally-no-n').textContent  = no.length+'개 조';
+    $('tally-yes-bar').style.width = (yes.length/total*100)+'%';
+    $('tally-no-bar').style.width  = (no.length/total*100)+'%';
+    $('tally-yes-groups').innerHTML = yes.map(g=>`<span class="group-badge">${g}조</span>`).join('');
+    $('tally-no-groups').innerHTML  = no.map(g=>`<span class="group-badge">${g}조</span>`).join('');
+  }
+
+  function renderBoards(){
+    // STAGE 1
+    const ideaGs = groupsOf(S.ideas);
+    $('board-idea').innerHTML = ideaGs.length
+      ? ideaGs.map(g=>cardHtml(g, `<div class="share-body">${escapeHtml(S.ideas[g].text)}</div>`)).join('')
+      : '<div class="empty-hint">아직 공유된 생각이 없습니다.</div>';
+
+    // STAGE 2
+    const sysGs = groupsOf(S.systems);
+    const count = {};
+    sysGs.forEach(g=>{
+      const it = S.systems[g];
+      it.picks.forEach(p=>{ count[p]=(count[p]||0)+1; });
+      if(it.etc){ count[it.etc]=(count[it.etc]||0)+1; }
+    });
+    const ranked = Object.keys(count).sort((a,b)=>count[b]-count[a]);
+    const max = ranked.length ? count[ranked[0]] : 1;
+    $('rank-list').innerHTML = ranked.length
+      ? ranked.map(name=>`<li class="rank-item"><span class="rank-name">${escapeHtml(name)}</span><span class="rank-bar"><i style="width:${count[name]/max*100}%"></i></span><span class="rank-count">${count[name]}조</span></li>`).join('')
+      : '';
+    $('board-system').innerHTML = sysGs.length
+      ? sysGs.map(g=>{
+          const it = S.systems[g];
+          const tags = it.picks.concat(it.etc ? [it.etc] : []);
+          return cardHtml(g,
+            `<div class="share-tags">${tags.map(t=>`<span class="share-tag">${escapeHtml(t)}</span>`).join('')}</div>
+             <div class="share-reason-label">추천 이유</div>
+             <div class="share-body">${escapeHtml(it.reason)}</div>`);
+        }).join('')
+      : '<div class="empty-hint">아직 공유된 추천이 없습니다.</div>';
+
+    // STAGE 3
+    const refGs = groupsOf(S.reform);
+    $('board-reform').innerHTML = refGs.length
+      ? refGs.map(g=>cardHtml(g, `<div class="share-body">${escapeHtml(S.reform[g].text)}</div>`)).join('')
+      : '<div class="empty-hint">아직 공유된 의견이 없습니다.</div>';
+
+    // ＋ 반전
+    $('board-twist').innerHTML = S.twist.length
+      ? S.twist.map(a=>{
+          const mine = String(a.group)===String(me.group);
+          return `<li class="answer-item"><span class="group-badge">${escapeHtml(a.group)}조</span>
+            <span class="qtext">${escapeHtml(a.text)}</span>
+            ${mine ? `<button class="del-btn" onclick="delTwist('${a.id}')" title="삭제">✕</button>` : ''}</li>`;
+        }).join('')
+      : '<div class="empty-hint">아직 공유된 대답이 없습니다.</div>';
+
+    // 제출 표시
+    const g = me.group;
+    $('state-idea').textContent   = (g && S.ideas[g])   ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
+    $('state-system').textContent = (g && S.systems[g]) ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
+    $('state-reform').textContent = (g && S.reform[g])  ? '✓ 공유됨 (수정 후 다시 누르면 바뀝니다)' : '';
+  }
+
+  function renderTeacherPanel(){
+    if(!isTeacher()) return;
+    $('tp-material').classList.toggle('on', !!S.materialOpen);
+    $('tp-material-state').textContent = S.materialOpen ? '열림' : '잠김';
+    $('tp-material-btn').textContent   = S.materialOpen ? '닫기' : '열기';
+    $('tp-twist').classList.toggle('on', !!S.twistOpen);
+    $('tp-twist-state').textContent = S.twistOpen ? '열림' : '잠김';
+    $('tp-twist-btn').textContent   = S.twistOpen ? '닫기' : '열기';
+
+    const twistCount = {};
+    S.twist.forEach(a=>{ twistCount[a.group]=(twistCount[a.group]||0)+1; });
+    let rows = '<tr><th>조</th><th>예/아니요</th><th>1단계 생각</th><th>2단계 추천</th><th>3단계 의견</th><th>＋ 대답</th></tr>';
+    for(let i=1;i<=GROUP_COUNT;i++){
+      const k = String(i);
+      const cell = (ok, text)=> ok ? `<td class="ok">${text||'✓'}</td>` : '<td class="no">–</td>';
+      rows += `<tr><td><strong>${i}조</strong></td>
+        ${cell(!!S.vote[k], S.vote[k])}
+        ${cell(!!S.ideas[k])}
+        ${cell(!!S.systems[k])}
+        ${cell(!!S.reform[k])}
+        ${cell(!!twistCount[k], (twistCount[k]||0)+'개')}</tr>`;
+    }
+    $('status-table').innerHTML = rows;
+  }
+
+  function renderShared(){
+    renderStudy();
+    renderTwistGate();
+    renderVote();
+    renderBoards();
+    renderTeacherPanel();
+  }
+
+  /* =========================================================
+   * 타이머 (※ ⑤ 단계에서 교사 화면과 동기화 예정 — 지금은 기기마다 따로)
+   * ========================================================= */
+  let timerSeconds = 0;
+  let timerRunning = false;
+  let timerHandle = null;
+  const timerDisplay = $('timer-display');
+  const timerWidget = $('timer-widget');
+  const timerBtn = $('timer-startpause');
+
+  function formatTime(sec){
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    return m+':'+s;
+  }
+  function renderTimer(){ timerDisplay.textContent = formatTime(Math.max(timerSeconds,0)); }
+  function timerSet(minutes){
+    timerPause();
+    timerSeconds = minutes*60;
+    timerWidget.classList.remove('done');
+    renderTimer();
+  }
+  function timerStartPause(){
+    if(timerRunning){ timerPause(); return; }
+    if(timerSeconds<=0) return;
+    timerRunning = true;
+    timerBtn.textContent = '❚❚';
+    timerWidget.classList.remove('done');
+    timerHandle = setInterval(()=>{
+      timerSeconds--;
+      renderTimer();
+      if(timerSeconds<=0){
+        timerPause();
+        timerWidget.classList.add('done');
+        beep();
+      }
+    },1000);
+  }
+  function timerPause(){
+    timerRunning = false;
+    timerBtn.textContent = '▶';
+    if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  }
+  function timerReset(){
+    timerPause();
+    timerSeconds = 0;
+    timerWidget.classList.remove('done');
+    renderTimer();
+  }
+  function beep(){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.value = 0.15;
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start();
+      setTimeout(()=>{ osc.stop(); ctx.close(); }, 500);
+    }catch(e){ /* 오디오 미지원 브라우저는 무시 */ }
+  }
+  renderTimer();
+
+  /* =========================================================
+   * 시작
+   * ========================================================= */
+  renderChips();
+  (async function boot(){
+    $('gate-mode-note').hidden = !PRACTICE;
+    $('mode-note').hidden = !PRACTICE;
+    if(PRACTICE) $('mode-note').textContent = '연습 모드 — 이 컴퓨터의 같은 브라우저 창끼리만 공유됩니다.';
+    backend.onAuth(onAuthChanged);
+
+    // 학생이 새로고침했을 때: 같은 수업 코드와 조로 바로 다시 입장
+    const code = (params.get('code')||'').trim();
+    if(!/^\d{4}$/.test(code)) return;
+    $('gate-code-input').value = code;
+    if(params.get('role')==='teacher') return;   // 교사는 로그인 확인 뒤 자동 입장
+    let s = null;
+    try{ s = JSON.parse(sessionStorage.getItem(SESSION_KEY)); }catch(e){}
+    if(s && s.code===code && s.group){
+      try{
+        if(await backend.roomMeta(code)){ enterRoom(code, 'student', s.group); return; }
+      }catch(e){ console.error(e); }
+    }
+    $('gate-group-select').focus();
+  })();
+</script>
+</body>
+</html>
