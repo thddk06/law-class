@@ -615,6 +615,92 @@
   .entry-no{font-family:'Noto Serif KR',serif;font-weight:700;color:#8a6a2f;font-size:13px;}
   .entry-head .del-btn{margin-left:auto;font-size:14px;}
 
+  /* ---- 교사 패널: 화면 띄우기 · 기록 내보내기 ---- */
+  .tp-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 10px;}
+  .tp-sheet{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    background:#fff;border:1px solid var(--plum-line);border-radius:9px;padding:10px 14px;font-size:12.5px;
+  }
+  .tp-sheet .tp-name{font-size:13px;font-weight:700;}
+  .tp-sheet input{
+    flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;
+    font-size:12px;background:#fff;color:var(--ink);
+  }
+  .sheet-state{font-weight:700;color:var(--text-muted);}
+  .sheet-state.on{color:var(--teamB);}
+
+  /* ---- 크게 띄우기 (프로젝터용) ---- */
+  #projector{
+    --pj:1;
+    position:fixed;inset:0;z-index:120;
+    background:var(--paper);
+    overflow:auto;
+    padding:0 clamp(16px,4vw,56px) 48px;
+  }
+  .pj-bar{
+    position:sticky;top:0;z-index:2;
+    background:var(--paper);border-bottom:1px solid var(--line);
+    padding:12px 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .pj-tab{
+    padding:9px 14px;border-radius:7px;border:1px solid var(--line);background:#fff;
+    font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;
+  }
+  .pj-tab.active{background:var(--ink);border-color:var(--ink);color:var(--paper-raise);}
+  .pj-tab.plus.active{background:var(--plum);border-color:var(--plum);}
+  .pj-bar select{
+    padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;
+    font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--ink);
+  }
+  .pj-timer{
+    margin-left:auto;
+    font-family:'Noto Serif KR',serif;font-weight:700;font-size:26px;font-variant-numeric:tabular-nums;
+    padding:2px 14px;border:2px solid var(--gold);border-radius:30px;
+  }
+  .pj-timer.done{border-color:var(--teamA);animation:pulse 1s ease-in-out infinite;}
+  .pj-title{
+    font-family:'Noto Serif KR',serif;font-weight:700;
+    font-size:calc(clamp(22px,2.8vw,40px) * var(--pj));line-height:1.45;
+    padding:6px 0 6px 20px;border-left:4px solid var(--gold);margin:28px 0 24px;
+  }
+  .pj-title.plum{border-left-color:var(--plum);}
+  .pj-empty{color:var(--text-muted);font-size:calc(18px * var(--pj));padding:10px 2px;}
+  #projector .board{grid-template-columns:repeat(auto-fill,minmax(calc(340px * var(--pj)),1fr));gap:16px;}
+  #projector .share-card{padding:16px 20px;}
+  #projector .share-body{font-size:calc(19px * var(--pj));line-height:1.6;}
+  #projector .group-badge{font-size:calc(15px * var(--pj));padding:4px 11px;}
+  #projector .entry-head{font-size:calc(13px * var(--pj));}
+  #projector .entry-no{font-size:calc(16px * var(--pj));}
+  #projector .share-tag{font-size:calc(14px * var(--pj));padding:4px 11px;}
+  #projector .share-reason-label{font-size:calc(12px * var(--pj));}
+  #projector .answer-item{padding:14px 18px;}
+  #projector .answer-item .qtext{font-size:calc(19px * var(--pj));}
+  .pj-rank{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:12px;max-width:1000px;}
+  .pj-rank li{display:flex;align-items:center;gap:16px;}
+  .pj-rank .nm{flex:0 0 calc(260px * var(--pj));font-family:'Noto Serif KR',serif;font-weight:700;font-size:calc(19px * var(--pj));}
+  .pj-rank .tr{flex:1;height:calc(30px * var(--pj));background:var(--paper-raise);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .pj-rank .tr i{display:block;height:100%;background:var(--gold);transition:width .3s ease;}
+  .pj-rank .ct{flex:0 0 auto;font-family:'Noto Serif KR',serif;font-weight:700;font-size:calc(22px * var(--pj));color:#7c5f27;}
+  .pj-vote{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1100px;}
+  .pj-vote .col{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;}
+  .pj-vote h4{
+    margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline;
+    font-family:'Noto Serif KR',serif;font-size:calc(34px * var(--pj));
+  }
+  .pj-vote h4 small{font-size:calc(22px * var(--pj));}
+  .pj-vote .yes h4{color:var(--teamA);}
+  .pj-vote .no h4{color:var(--teamB);}
+  .pj-vote .tr{height:calc(22px * var(--pj));border-radius:6px;background:var(--paper);overflow:hidden;margin-bottom:14px;}
+  .pj-vote .tr i{display:block;height:100%;transition:width .3s ease;}
+  .pj-vote .yes .tr i{background:var(--teamA);}
+  .pj-vote .no .tr i{background:var(--teamB);}
+  .pj-vote .gs{display:flex;flex-wrap:wrap;gap:8px;}
+  @media (max-width:640px){
+    .pj-vote{grid-template-columns:1fr;}
+    .pj-rank .nm{flex-basis:120px;}
+    .pj-timer{margin-left:0;}
+  }
+
   @media (max-width:640px){
     .gate-cards{flex-direction:column;}
     .wrap{padding-bottom:110px;}
@@ -758,9 +844,20 @@
     <div class="status-scroll">
       <table class="status-table" id="status-table"></table>
     </div>
+    <div class="tp-tools">
+      <button class="btn plum small" onclick="openProjector()">🖥 크게 띄우기 (프로젝터용)</button>
+      <button class="btn small" onclick="downloadCsv()">전체 기록 내려받기 (엑셀용 CSV)</button>
+      <button class="btn small" onclick="sendToSheet()">구글 시트에 기록하기</button>
+    </div>
+    <div class="tp-sheet">
+      <span class="tp-name">구글 시트 연결</span>
+      <span class="sheet-state" id="sheet-state">연결 안 됨</span>
+      <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" aria-label="구글 시트 연결 주소">
+      <button class="btn ghost small" onclick="saveSheetUrl()">저장</button>
+    </div>
     <div class="tp-end">
       <button class="btn danger small" onclick="endClass()">수업 종료 · 모든 기록 삭제</button>
-      <span class="tp-note" style="margin:0;">종료하면 이 수업 코드의 학생 입력이 서버에서 모두 지워지고, 학생 화면도 닫힙니다.</span>
+      <span class="tp-note" style="margin:0;">먼저 기록을 내려받거나 구글 시트에 기록한 뒤 종료하세요. 종료하면 이 수업 코드의 학생 입력이 서버에서 모두 지워지고, 학생 화면도 닫힙니다.</span>
     </div>
   </section>
 
@@ -1002,6 +1099,23 @@
 
 </div><!-- /app-screen -->
 
+<!-- 크게 띄우기 (프로젝터용, 교사 화면에서만 열림) -->
+<div id="projector" hidden>
+  <div class="pj-bar">
+    <button class="pj-tab" data-pj="vote" onclick="setPjMode('vote')">예/아니요</button>
+    <button class="pj-tab" data-pj="s1" onclick="setPjMode('s1')">STAGE 1 생각</button>
+    <button class="pj-tab" data-pj="s2" onclick="setPjMode('s2')">STAGE 2 추천</button>
+    <button class="pj-tab" data-pj="s3" onclick="setPjMode('s3')">STAGE 3 의견</button>
+    <button class="pj-tab plus" data-pj="plus" onclick="setPjMode('plus')">＋ 대답</button>
+    <select id="pj-group" onchange="renderProjector()" aria-label="조 고르기"></select>
+    <button class="btn ghost small" onclick="pjZoom(-0.15)" title="글자 작게">가 −</button>
+    <button class="btn ghost small" onclick="pjZoom(0.15)" title="글자 크게">가 +</button>
+    <span class="pj-timer" id="pj-timer">00:00</span>
+    <button class="btn small" onclick="closeProjector()">닫기 ✕</button>
+  </div>
+  <div id="pj-body"></div>
+</div>
+
 <!-- Firebase (여러 기기 실시간 공유 · 교사 로그인) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -1103,7 +1217,9 @@
     _myKey:'law3p_teacher_rooms',
     async myRooms(){ try{ return JSON.parse(localStorage.getItem(this._myKey)) || {}; }catch(e){ return {}; } },
     async addMyRoom(code, ts){ const m = await this.myRooms(); m[code] = ts; localStorage.setItem(this._myKey, JSON.stringify(m)); },
-    async removeMyRoom(code){ const m = await this.myRooms(); delete m[code]; localStorage.setItem(this._myKey, JSON.stringify(m)); }
+    async removeMyRoom(code){ const m = await this.myRooms(); delete m[code]; localStorage.setItem(this._myKey, JSON.stringify(m)); },
+    async getSetting(key){ try{ return localStorage.getItem('law3p_setting_'+key) || ''; }catch(e){ return ''; } },
+    async setSetting(key, val){ localStorage.setItem('law3p_setting_'+key, val); }
   };
 
   const FirebaseBackend = {
@@ -1152,7 +1268,13 @@
       return s.val() || {};
     },
     async addMyRoom(code, ts){ await withTimeout(this.db.ref('law3/teacher/rooms/'+code).set(ts), 10000); },
-    async removeMyRoom(code){ await withTimeout(this.db.ref('law3/teacher/rooms/'+code).remove(), 10000); }
+    async removeMyRoom(code){ await withTimeout(this.db.ref('law3/teacher/rooms/'+code).remove(), 10000); },
+    // 교사 전용 설정 (구글 시트 연결 주소 등) — 학생은 읽을 수 없음
+    async getSetting(key){
+      const s = await withTimeout(this.db.ref('law3/teacher/settings/'+key).once('value'), 10000);
+      return s.val() || '';
+    },
+    async setSetting(key, val){ await withTimeout(this.db.ref('law3/teacher/settings/'+key).set(val || null), 10000); }
   };
 
   let everConnected = false;
@@ -1532,7 +1654,8 @@
 
     S = Store.empty();
     lastTwistOpen = null;
-    if(isTeacher()){ DRAFT_IDS.forEach(id=>{ $(id).value = ''; }); selPicks = []; renderChips(); }
+    savedCount = -1;
+    if(isTeacher()){ DRAFT_IDS.forEach(id=>{ $(id).value = ''; }); selPicks = []; renderChips(); loadSheetUrl(); }
     else restoreDraft();
     applyRole();
     unsubscribe = backend.subscribe(code, onRoom);
@@ -1556,6 +1679,7 @@
   }
 
   function backToGate(msg){
+    closeProjector();
     if(unsubscribe){ unsubscribe(); unsubscribe = null; }
     try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
     ROOM = null; room = null;
@@ -1574,7 +1698,10 @@
   // 교사: 수업 종료 (이 수업 코드의 기록을 서버에서 모두 삭제)
   async function endClass(){
     if(!isTeacher()) return;
-    if(!confirm('수업을 종료하고 이 수업 코드('+ROOM+')의 모든 기록을 삭제할까요?\n학생 화면도 모두 닫히고, 삭제한 뒤에는 되돌릴 수 없습니다.')) return;
+    const n = recordCount();
+    const warn = (n>0 && savedCount!==n)
+      ? '⚠ 아직 내려받거나 구글 시트에 기록하지 않은 내용이 있습니다. 필요하면 [취소]를 누르고 먼저 저장하세요.\n\n' : '';
+    if(!confirm(warn+'수업을 종료하고 이 수업 코드('+ROOM+')의 모든 기록을 삭제할까요?\n학생 화면도 모두 닫히고, 삭제한 뒤에는 되돌릴 수 없습니다.')) return;
     const code = ROOM;
     try{
       await backend.deleteRoom(code);
@@ -1858,6 +1985,7 @@
     renderVote();
     renderBoards();
     renderTeacherPanel();
+    if(isTeacher()) renderProjector();
   }
 
   /* =========================================================
@@ -1914,6 +2042,8 @@
     }
     timerDisplay.textContent = formatTime(remaining);
     timerWidget.classList.toggle('done', done);
+    $('pj-timer').textContent = formatTime(remaining);
+    $('pj-timer').classList.toggle('done', done);
     timerBtn.textContent = t.running ? '❚❚' : '▶';
   }
   function beep(){
@@ -1930,6 +2060,211 @@
     }catch(e){ /* 오디오 미지원 브라우저는 무시 */ }
   }
   setInterval(()=>{ if(ROOM) tickTimer(); }, 250);
+
+  /* =========================================================
+   * 크게 띄우기 (프로젝터용) — 교사 화면에서만
+   * ========================================================= */
+  const projector = $('projector');
+  let pjMode = 'vote';
+  let pjScale = 1;
+  let pjGroupsKey = null;
+  const PJ_TITLE = {
+    vote: '"이 사건은 범죄에 해당하는가?"',
+    s1:   '"이 사람을 위해 어떤 제도가 필요할까?"',
+    s2:   '"이 사람에게 어떤 제도를 추천할 수 있을까?"',
+    s3:   '"우리나라 형사 절차상의 인권 보장 제도는 어떻게 변화해야 할까?"',
+    plus: '"이런 상황에서 국가는 어떻게 해야 할까?"'
+  };
+
+  function openProjector(){
+    if(!isTeacher()) return;
+    const active = document.querySelector('.tab.active');
+    const st = active ? active.dataset.stage : '1';
+    pjMode = st==='2' ? 's2' : st==='3' ? 's3' : st==='4' ? 'plus' : 'vote';
+    projector.hidden = false;
+    document.body.style.overflow = 'hidden';
+    try{ if(projector.requestFullscreen) projector.requestFullscreen().catch(()=>{}); }catch(e){}
+    renderProjector();
+  }
+  function closeProjector(){
+    if(projector.hidden) return;
+    projector.hidden = true;
+    document.body.style.overflow = '';
+    try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  }
+  function setPjMode(m){ pjMode = m; renderProjector(); }
+  function pjZoom(d){
+    pjScale = Math.min(2, Math.max(0.6, pjScale + d));
+    projector.style.setProperty('--pj', pjScale);
+  }
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && !projector.hidden && !document.fullscreenElement) closeProjector();
+  });
+
+  function renderProjector(){
+    if(projector.hidden || !ROOM) return;
+    document.querySelectorAll('#projector .pj-tab').forEach(b=>b.classList.toggle('active', b.dataset.pj===pjMode));
+
+    // 조 고르기 (조 구성은 고정이라 한 번만 그림)
+    const sel = $('pj-group');
+    const key = String(GROUP_COUNT);
+    if(pjGroupsKey!==key){
+      pjGroupsKey = key;
+      sel.innerHTML = '<option value="">전체 조</option>' +
+        Array.from({length:GROUP_COUNT}, (_,i)=>`<option value="${i+1}">${i+1}조</option>`).join('');
+    }
+    sel.hidden = (pjMode==='vote');
+    const pick = g=> !sel.value || String(g)===sel.value;
+    const empty = '<div class="pj-empty">아직 공유된 내용이 없습니다.</div>';
+    const cards = (obj, inner)=>{
+      const gs = groupsOf(obj).filter(pick);
+      return gs.length ? `<div class="board">${gs.map(g=>cardHtml(g, obj[g].map((e,i)=>
+        `<div class="entry"><div class="entry-head"><span class="entry-no">${entryNo(i)}</span><span>${hhmm(e.ts)}</span></div>${inner(e)}</div>`
+      ).join(''))).join('')}</div>` : empty;
+    };
+    const textInner = e=>`<div class="share-body">${escapeHtml(e.text)}</div>`;
+
+    let body = '';
+    if(pjMode==='vote'){
+      const gs = groupsOf(S.vote);
+      const yes = gs.filter(g=>S.vote[g]==='예');
+      const no  = gs.filter(g=>S.vote[g]==='아니요');
+      const total = Math.max(yes.length+no.length, 1);
+      const col = (cls, label, list)=>`
+        <div class="col ${cls}">
+          <h4><span>${label}</span><small>${list.length}개 조</small></h4>
+          <div class="tr"><i style="width:${list.length/total*100}%"></i></div>
+          <div class="gs">${list.map(g=>`<span class="group-badge">${escapeHtml(g)}조</span>`).join('')}</div>
+        </div>`;
+      body = `<div class="pj-vote">${col('yes','예',yes)}${col('no','아니요',no)}</div>`;
+    } else if(pjMode==='s1'){
+      body = cards(S.ideas, textInner);
+    } else if(pjMode==='s2'){
+      const count = systemCounts();
+      const ranked = Object.keys(count).sort((a,b)=>count[b]-count[a]);
+      const max = ranked.length ? count[ranked[0]] : 1;
+      const rank = (ranked.length && !sel.value) ? `<ul class="pj-rank">${ranked.map(n=>
+        `<li><span class="nm">${escapeHtml(n)}</span><span class="tr"><i style="width:${count[n]/max*100}%"></i></span><span class="ct">${count[n]}개 조</span></li>`
+      ).join('')}</ul>` : '';
+      body = rank + cards(S.systems, systemTagsHtml);
+    } else if(pjMode==='s3'){
+      body = cards(S.reform, textInner);
+    } else {
+      const list = S.twist.filter(a=>pick(a.group));
+      body = list.length ? `<ul class="answer-list">${list.map(a=>
+        `<li class="answer-item"><span class="group-badge">${escapeHtml(a.group)}조</span><span class="qtext">${escapeHtml(a.text)}</span></li>`
+      ).join('')}</ul>` : empty;
+    }
+    $('pj-body').innerHTML = `<div class="pj-title ${pjMode==='plus'?'plum':''}">${PJ_TITLE[pjMode]}</div>${body}`;
+  }
+
+  /* =========================================================
+   * 전체 기록 정리 (CSV 내려받기 · 구글 시트 기록에 함께 사용)
+   * ========================================================= */
+  let savedCount = -1;   // 마지막으로 내려받거나 시트에 기록했을 때의 기록 수
+  function fullTime(ts){
+    if(!ts) return '';
+    const d = new Date(ts);
+    const p = n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  }
+  function safeCell(v){
+    let s = String(v===null || v===undefined ? '' : v);
+    if(/^[=+\-@]/.test(s)) s = "'"+s;   // 엑셀·시트가 수식으로 잘못 읽지 않도록
+    return s;
+  }
+  function buildRows(){
+    const rows = [['수업 코드','단계','활동','조','순서','내용','추천 제도','시각']];
+    const add = (stage, act, g, no, text, extra, ts)=>rows.push([ROOM, stage, act, g ? g+'조' : '', no, text, extra||'', fullTime(ts)]);
+    const S1 = 'STAGE 1 지식습득', S2 = 'STAGE 2 지식활용', S3 = 'STAGE 3 지식창출', PL = '＋ 반전';
+
+    groupsOf(S.vote).forEach(g=>add(S1, '범죄에 해당하는가 (최종 선택)', g, '', S.vote[g], '', ''));
+    S.voteLog.forEach(v=>add(S1, '범죄에 해당하는가 (선택 기록)', v.group, '', v.vote, '', v.ts));
+    groupsOf(S.ideas).forEach(g=>S.ideas[g].forEach((e,i)=>add(S1, '이 사람을 위해 필요한 제도 (조별 생각)', g, i+1, e.text, '', e.ts)));
+    groupsOf(S.systems).forEach(g=>S.systems[g].forEach((e,i)=>add(S2, '추천 제도와 이유', g, i+1, e.reason, e.picks.concat(e.etc ? [e.etc] : []).join(', '), e.ts)));
+    groupsOf(S.reform).forEach(g=>S.reform[g].forEach((e,i)=>add(S3, '인권 보장 제도는 어떻게 변화해야 할까 (조별 의견)', g, i+1, e.text, '', e.ts)));
+    const twistNo = {};
+    S.twist.slice().sort((a,b)=>(Number(a.group)-Number(b.group)) || byTime(a,b)).forEach(a=>{
+      twistNo[a.group] = (twistNo[a.group]||0)+1;
+      add(PL, '국가는 어떻게 해야 할까 (대답)', a.group, twistNo[a.group], a.text, '', a.ts);
+    });
+    return rows.map(r=>r.map(safeCell));
+  }
+  function recordCount(){ return buildRows().length - 1; }
+  function stamp(){
+    const d = new Date(), p = n=>String(n).padStart(2,'0');
+    return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes());
+  }
+
+  function downloadCsv(){
+    if(!isTeacher() || !ROOM) return;
+    const rows = buildRows();
+    if(rows.length<=1){ toast('아직 내려받을 기록이 없습니다.'); return; }
+    const csv = rows.map(r=>r.map(c=>'"'+c.replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    // 맨 앞의 ﻿ 는 엑셀에서 한글이 깨지지 않게 하는 표시
+    const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '형사절차인권보장-3차시_기록_'+ROOM+'_'+stamp()+'.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    savedCount = rows.length-1;
+    toast('기록 '+(rows.length-1)+'건을 내려받았습니다. (다운로드 폴더 확인)');
+  }
+
+  /* =========================================================
+   * 구글 시트에 기록하기 (교사 화면 → 선생님 구글 시트의 '받는 창구')
+   * 연결 주소는 서버의 교사 전용 칸에 저장되어 학생에게 보이지 않습니다.
+   * ========================================================= */
+  let sheetUrl = '';
+  const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/;
+  function renderSheetState(){
+    const el = $('sheet-state');
+    el.textContent = sheetUrl ? '연결됨' : '연결 안 됨';
+    el.classList.toggle('on', !!sheetUrl);
+    $('sheet-url').value = sheetUrl;
+  }
+  async function loadSheetUrl(){
+    try{ sheetUrl = await backend.getSetting('sheetUrl'); }catch(e){ console.error(e); sheetUrl = ''; }
+    renderSheetState();
+  }
+  async function saveSheetUrl(){
+    if(!isTeacher()) return;
+    const v = $('sheet-url').value.trim();
+    if(v && !SHEET_URL_RE.test(v)){
+      toast('주소가 맞지 않습니다. https://script.google.com/macros/s/ 로 시작하고 /exec 로 끝나야 합니다.');
+      return;
+    }
+    try{
+      await backend.setSetting('sheetUrl', v);
+      sheetUrl = v;
+      renderSheetState();
+      toast(v ? '구글 시트 연결 주소를 저장했습니다.' : '구글 시트 연결을 해제했습니다.');
+    }catch(e){ storeError(e); }
+  }
+  async function sendToSheet(){
+    if(!isTeacher() || !ROOM) return;
+    if(!sheetUrl){ toast('먼저 아래 "구글 시트 연결"에 주소를 넣고 저장하세요.'); $('sheet-url').focus(); return; }
+    const rows = buildRows();
+    if(rows.length<=1){ toast('아직 기록할 내용이 없습니다.'); return; }
+    const d = new Date(), p = n=>String(n).padStart(2,'0');
+    const sheetName = d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' 3차시 '+ROOM;
+    const body = JSON.stringify({sheetName, rows});
+    toast('구글 시트에 기록하는 중…');
+    try{
+      const res = await fetch(sheetUrl, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body});
+      const out = await res.json();
+      if(!out.ok) throw new Error(out.error || '알 수 없는 오류');
+      savedCount = rows.length-1;
+      toast('구글 시트의 "'+out.sheet+'" 탭에 '+out.count+'건을 기록했습니다.');
+    }catch(e){
+      // 응답을 확인하지 못한 경우: 이미 기록됐을 수 있으므로 다시 보내지 않고 확인을 안내
+      console.error(e);
+      alert('구글 시트의 응답을 확인하지 못했습니다.\n\n구글 시트를 열어 "'+sheetName+'" 탭이 생겼는지 확인해주세요.\n탭이 없으면 인터넷 연결과 연결 주소를 확인한 뒤 다시 눌러주세요.\n(오류: '+e.message+')');
+    }
+  }
 
   /* =========================================================
    * 시작
