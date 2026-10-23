@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>법 없이는 죄도 없다 — 죄형법정주의로 보는 사건</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1C2430;
+    --paper:#EDE6D6;
+    --paper-raise:#F5F0E4;
+    --line:#C9BFA8;
+    --text-muted:#6B6250;
+    --gold:#B08D57;
+    --gold-soft:#EDE0C8;
+    --teamA:#8B3A3A;
+    --teamA-soft:#F1DEDA;
+    --teamA-line:#C79A94;
+    --teamB:#2F5D62;
+    --teamB-soft:#DCEAE8;
+    --teamB-line:#9BC0BE;
+    /* Bloom 6단계 분류 색상군: 습득(gold) · 활용(slate) · 창출(plum) */
+    --lvl-know-bg:#F3E8C8;   --lvl-know-tx:#8A6A2F;   --lvl-know-ln:#B08D57;
+    --lvl-comp-bg:#ECDDAE;   --lvl-comp-tx:#725623;   --lvl-comp-ln:#9C7A3F;
+    --lvl-appl-bg:#DCE4EC;   --lvl-appl-tx:#3B5978;   --lvl-appl-ln:#7C97AE;
+    --lvl-anal-bg:#C7D6E4;   --lvl-anal-tx:#2A4560;   --lvl-anal-ln:#5D7C97;
+    --lvl-synt-bg:#E9DDE9;   --lvl-synt-tx:#6B3F6E;   --lvl-synt-ln:#A98BAC;
+    --lvl-eval-bg:#DBC5DD;   --lvl-eval-tx:#53314F;   --lvl-eval-ln:#8C6690;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    line-height:1.6;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px;}
+
+  /* ---- Header: 사건 기록부 표지 ---- */
+  header{
+    text-align:center;
+    padding:8px 0 22px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:26px;
+  }
+  .case-no{
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:12px;
+    letter-spacing:0.04em;
+    color:var(--text-muted);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:clamp(26px,4vw,36px);
+    margin:0 0 8px;
+  }
+  .subtitle{
+    font-size:14px;
+    color:var(--text-muted);
+  }
+
+  /* ---- Stage tabs (folder dividers) ---- */
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin-bottom:0;
+    position:relative;
+    z-index:2;
+  }
+  .tab{
+    flex:1;
+    padding:14px 10px 12px;
+    text-align:center;
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--text-muted);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-bottom:none;
+    border-radius:10px 10px 0 0;
+    cursor:pointer;
+    transform:translateY(6px);
+    transition:transform .18s ease, background .18s ease, color .18s ease;
+  }
+  .tab .tab-num{
+    display:block;
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:500;
+    font-size:11px;
+    color:var(--text-muted);
+    margin-bottom:4px;
+    letter-spacing:.04em;
+  }
+  .tab.active{
+    background:var(--paper-raise);
+    color:var(--ink);
+    transform:translateY(0);
+    border-color:var(--gold);
+  }
+  .tab.active .tab-num{color:var(--gold);}
+
+  .stage-panel{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:0 10px 10px 10px;
+    padding:28px;
+    position:relative;
+  }
+  .stage-panel[hidden]{display:none;}
+
+  .stimulus{
+    font-family:'Noto Serif KR', serif;
+    font-size:17px;
+    line-height:1.75;
+    padding:14px 0 14px 20px;
+    border-left:3px solid var(--gold);
+    color:var(--ink);
+    margin-bottom:22px;
+  }
+  .stimulus small{
+    display:block;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:12px;
+    color:var(--text-muted);
+    margin-top:6px;
+  }
+
+  /* ---- Input row ---- */
+  .input-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .input-row input[type=text]{
+    flex:1;
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:14px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .input-row input[type=text]:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .group-input{
+    width:78px;
+    flex:0 0 78px;
+    padding:11px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:13px;
+    background:#fff;
+    color:var(--ink);
+    text-align:center;
+  }
+  .group-input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .group-badge{
+    font-size:11px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:5px;
+    background:var(--ink);
+    color:var(--paper-raise);
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .btn{
+    padding:11px 18px;
+    border:none;
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    background:var(--ink);
+    color:var(--paper-raise);
+  }
+  .btn:hover{opacity:.88;}
+  .btn.small{padding:6px 11px;font-size:12px;font-weight:500;}
+  .btn.ghost{
+    background:transparent;
+    color:var(--text-muted);
+    border:1px solid var(--line);
+  }
+
+  /* ---- Question list (stage 1) ---- */
+  .qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .qitem{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:7px;
+  }
+  .qitem .qtext{flex:1;font-size:14px;}
+  .tag-btn{
+    font-size:12px;
+    font-weight:500;
+    padding:5px 10px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:transparent;
+    cursor:pointer;
+    color:var(--text-muted);
+    white-space:nowrap;
+  }
+  .tag-btn.lvl-지식{background:var(--lvl-know-bg);border-color:var(--lvl-know-ln);color:var(--lvl-know-tx);}
+  .tag-btn.lvl-이해{background:var(--lvl-comp-bg);border-color:var(--lvl-comp-ln);color:var(--lvl-comp-tx);}
+  .tag-btn.lvl-적용{background:var(--lvl-appl-bg);border-color:var(--lvl-appl-ln);color:var(--lvl-appl-tx);}
+  .tag-btn.lvl-분석{background:var(--lvl-anal-bg);border-color:var(--lvl-anal-ln);color:var(--lvl-anal-tx);}
+  .tag-btn.lvl-종합{background:var(--lvl-synt-bg);border-color:var(--lvl-synt-ln);color:var(--lvl-synt-tx);}
+  .tag-btn.lvl-평가{background:var(--lvl-eval-bg);border-color:var(--lvl-eval-ln);color:var(--lvl-eval-tx);}
+  .tag-btn.lvl-질문{background:var(--lvl-appl-bg);border-color:var(--lvl-appl-ln);color:var(--lvl-appl-tx);}
+  .tag-btn.lvl-대답{background:var(--lvl-synt-bg);border-color:var(--lvl-synt-ln);color:var(--lvl-synt-tx);}
+  .star-btn{
+    background:none;border:none;cursor:pointer;font-size:17px;color:var(--line);
+    padding:2px;line-height:1;
+  }
+  .star-btn.on{color:var(--gold);}
+  .del-btn{background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:16px;padding:2px 4px;}
+  .del-btn:hover{color:var(--teamA);}
+  .empty-hint{color:var(--text-muted);font-size:13px;padding:14px 2px;}
+
+  /* ---- Stage 2: two teams facing off ---- */
+  .versus{
+    display:flex;
+    align-items:stretch;
+    gap:0;
+    margin-top:4px;
+  }
+  .team-col{
+    flex:1;
+    min-width:0;
+    padding:18px;
+    border-radius:9px;
+  }
+  .team-col.teamA{background:var(--teamA-soft);border:1px solid var(--teamA-line);}
+  .team-col.teamB{background:var(--teamB-soft);border:1px solid var(--teamB-line);}
+  .team-label{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:4px;
+  }
+  .team-col.teamA .team-label{color:var(--teamA);}
+  .team-col.teamB .team-label{color:var(--teamB);}
+  .team-stance{font-size:12.5px;color:var(--text-muted);margin-bottom:14px;}
+  .divider{
+    width:52px;
+    flex:0 0 52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .qitem.teamA-item{border-color:var(--teamA-line);}
+  .qitem.teamB-item{border-color:var(--teamB-line);}
+
+  .lvl-legend{
+    display:flex;flex-wrap:wrap;gap:6px 10px;margin:0 0 18px;
+  }
+  .lvl-legend span{
+    font-size:11.5px;padding:3px 9px;border-radius:20px;border:1px solid var(--line);
+    color:var(--text-muted);
+  }
+  .hint-note{
+    font-size:11.5px;color:var(--text-muted);margin:-10px 0 16px;
+  }
+  .hint-btn{
+    font-size:11.5px;
+    padding:4px 9px;
+    border-radius:20px;
+    border:1px dashed var(--gold);
+    background:transparent;
+    color:#8a6a2f;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .hint-btn:hover{background:var(--gold-soft);}
+
+  /* ---- 사건 개요 (각색된 기사) ---- */
+  .case-brief{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    margin-bottom:22px;
+    overflow:hidden;
+  }
+  .case-brief summary{
+    list-style:none;
+    cursor:pointer;
+    padding:16px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:16px;
+  }
+  .case-brief summary::-webkit-details-marker{display:none;}
+  .case-brief summary::after{
+    content:'▾';
+    font-family:'Noto Sans KR',sans-serif;
+    color:var(--gold);
+    transition:transform .2s ease;
+  }
+  .case-brief[open] summary::after{transform:rotate(180deg);}
+  .case-brief-tag{
+    font-family:'Noto Sans KR',sans-serif;
+    font-weight:500;
+    font-size:11.5px;
+    color:var(--text-muted);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:3px 10px;
+    white-space:nowrap;
+  }
+  .case-brief-body{
+    padding:0 22px 22px;
+    border-top:1px solid var(--line);
+  }
+  .case-brief-body p{
+    font-family:'Noto Serif KR',serif;
+    font-size:15px;
+    line-height:1.85;
+    margin:16px 0 0;
+  }
+  .case-brief-body ul{
+    margin:12px 0 0;
+    padding-left:20px;
+  }
+  .case-brief-body li{
+    font-size:14px;
+    line-height:1.75;
+    margin-bottom:6px;
+    color:var(--ink);
+  }
+  .case-brief-body .brief-question{
+    margin-top:18px;
+    padding:14px 16px;
+    background:var(--gold-soft);
+    border-radius:7px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:15px;
+  }
+  .case-brief-source{
+    display:block;
+    margin-top:14px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+  .study-locked{
+    font-size:13.5px;
+    color:var(--text-muted);
+    background:var(--paper);
+    border:1px dashed var(--line);
+    border-radius:9px;
+    padding:16px 20px;
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .info-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+  }
+  .info-table th, .info-table td{
+    border:1px solid var(--line);
+    padding:8px 10px;
+    font-size:13px;
+    text-align:left;
+    vertical-align:top;
+    line-height:1.6;
+  }
+  .info-table th{
+    background:var(--gold-soft);
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    white-space:nowrap;
+    width:100px;
+    color:#7c5f27;
+  }
+  .info-table td ol, .info-table td ul{margin:0;padding-left:18px;}
+  .info-subhead{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:14px;
+    margin:20px 0 4px;
+    color:var(--ink);
+  }
+
+  @media (max-width:720px){
+    .versus{flex-direction:column;}
+    .divider{width:100%;flex:0 0 auto;padding:6px 0;}
+    .divider svg{transform:rotate(90deg);}
+  }
+
+  /* ---- Stage 3: 조정 원부(ledger) ---- */
+  .ledger{
+    background:repeating-linear-gradient(
+      var(--paper-raise),
+      var(--paper-raise) 37px,
+      var(--line) 38px
+    );
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 4px 20px;
+  }
+  .ledger-item{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    padding:6px 16px;
+    min-height:38px;
+  }
+  .ledger-num{font-family:'Noto Serif KR',serif;color:var(--gold);font-weight:700;font-size:14px;min-width:20px;}
+  .ledger-badge{
+    font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;flex:0 0 auto;
+  }
+  .ledger-badge.A{background:var(--teamA-soft);color:var(--teamA);}
+  .ledger-badge.B{background:var(--teamB-soft);color:var(--teamB);}
+  .ledger-badge.N{background:var(--gold-soft);color:#8a6a2f;}
+  .ledger-text{flex:1;font-size:14.5px;}
+  .ledger-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;}
+
+  .mediator-input{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .who-select{
+    display:flex;gap:6px;
+  }
+  .who-btn{
+    padding:11px 14px;border-radius:7px;border:1px solid var(--line);background:#fff;
+    font-size:13px;cursor:pointer;color:var(--text-muted);font-weight:500;
+  }
+  .who-btn.A.active{background:var(--teamA);color:#fff;border-color:var(--teamA);}
+  .who-btn.B.active{background:var(--teamB);color:#fff;border-color:var(--teamB);}
+  .who-btn.N.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+  .section-title{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:15px;
+    margin:26px 0 12px;
+    color:var(--ink);
+  }
+  .section-title:first-of-type{margin-top:0;}
+
+  .footer-note{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:12.5px;
+    margin-top:26px;
+  }
+
+  /* ---- Timer (stamp-style, fixed) ---- */
+  #timer-widget{
+    position:fixed;
+    top:18px;
+    right:18px;
+    width:132px;
+    background:var(--paper-raise);
+    border:2px solid var(--gold);
+    border-radius:50%;
+    aspect-ratio:1/1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    box-shadow:0 2px 10px rgba(28,36,48,0.14);
+    z-index:50;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  #timer-widget.done{
+    border-color:var(--teamA);
+    animation:pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{background:var(--paper-raise);}
+    50%{background:var(--teamA-soft);}
+  }
+  .timer-label{
+    font-size:10px;
+    letter-spacing:.06em;
+    color:var(--text-muted);
+  }
+  .timer-display{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:24px;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+  .timer-controls{
+    display:flex;
+    gap:4px;
+  }
+  .timer-controls button{
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-size:13px;
+    color:var(--text-muted);
+    padding:1px 3px;
+  }
+  .timer-controls button:hover{color:var(--ink);}
+  .timer-presets{
+    position:fixed;
+    top:154px;
+    right:18px;
+    width:132px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    justify-content:center;
+    z-index:50;
+  }
+  .timer-presets button{
+    font-size:11px;
+    padding:4px 7px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:var(--paper-raise);
+    color:var(--text-muted);
+    cursor:pointer;
+  }
+  .timer-presets button:hover{border-color:var(--gold);color:var(--ink);}
+
+  @media (max-width:640px){
+    #timer-widget{width:88px;top:10px;right:10px;}
+    .timer-display{font-size:17px;}
+    .timer-label{font-size:8.5px;}
+    .timer-presets{width:88px;top:104px;right:10px;}
+    .timer-presets button{font-size:9.5px;padding:3px 5px;}
+  }
+  /* ============================================================
+     여기부터 실시간 공유 버전에서 추가된 모양 (기존 디자인은 위 그대로)
+  ============================================================ */
+  [hidden]{display:none !important;}
+  .input-row .btn{white-space:nowrap;flex:0 0 auto;}
+  body.role-student .teacher-only{display:none !important;}
+  body.role-teacher .student-only{display:none !important;}
+
+  /* ---- 입장 화면 ---- */
+  #gate-screen{min-height:100vh;display:flex;align-items:center;}
+  .gate-wrap{max-width:680px;margin:0 auto;padding:40px 20px;text-align:center;}
+  .gate-cards{display:flex;gap:16px;margin-top:28px;text-align:left;}
+  .gate-card{
+    flex:1;
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+  }
+  .gate-card-title{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:8px;
+  }
+  .gate-card p{font-size:13px;color:var(--text-muted);margin:0 0 16px;flex:1;}
+  .gate-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .gate-field label{font-size:12px;color:var(--text-muted);}
+  .gate-field input{
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:16px;
+    background:#fff;
+    color:var(--ink);
+    letter-spacing:.08em;
+  }
+  .gate-field input:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .gate-msg{
+    margin-top:18px;
+    padding:12px 16px;
+    border-radius:8px;
+    font-size:13.5px;
+    text-align:left;
+  }
+  .gate-msg.error{background:var(--teamA-soft);color:var(--teamA);border:1px solid var(--teamA-line);}
+  .gate-msg.warn{background:var(--gold-soft);color:#7c5f27;border:1px solid var(--gold);}
+  .gate-msg.plain{color:var(--text-muted);padding:0;}
+
+  /* ---- 수업 코드 표시줄 ---- */
+  .room-bar{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin:-10px 0 22px;
+    font-size:13px;
+  }
+  .role-badge{
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:20px;
+    color:#fff;
+    font-size:12px;
+  }
+  .role-badge.teacher{background:var(--gold);}
+  .role-badge.student{background:var(--teamB);}
+  .room-code-label{color:var(--text-muted);}
+  .room-code-label strong{color:var(--ink);font-family:'Noto Serif KR',serif;letter-spacing:.06em;}
+  .mode-note{
+    background:var(--gold-soft);
+    color:#7c5f27;
+    border:1px solid var(--gold);
+    border-radius:8px;
+    padding:8px 14px;
+    font-size:12.5px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  #toast{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%);
+    background:var(--ink);
+    color:var(--paper-raise);
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:13.5px;
+    z-index:200;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    max-width:90vw;
+  }
+  #toast.show{opacity:1;}
+
+  /* ---- 탭: 교사가 진행 중인 단계 / 아직 안 열린 단계 ---- */
+  .tab.live .tab-num::after{content:' · 진행 중';color:var(--teamA);}
+  .tab.locked{opacity:.45;cursor:not-allowed;}
+
+  /* ---- STAGE 2 역할 선택 ---- */
+  .side-box{
+    background:var(--paper);
+    border:1px dashed var(--gold);
+    border-radius:9px;
+    padding:14px 18px;
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    font-size:14px;
+  }
+  .side-box strong{font-family:'Noto Serif KR',serif;}
+
+  /* ---- 교사 패널 ---- */
+  .teacher-panel{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:6px 22px;
+    margin-bottom:22px;
+  }
+  .tp-row{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .tp-row:last-child{border-bottom:none;}
+  .tp-label{
+    flex:0 0 110px;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:13.5px;
+    color:#7c5f27;
+  }
+  .tp-note{font-size:11.5px;color:var(--text-muted);}
+  .big-code{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:32px;
+    letter-spacing:.14em;
+    line-height:1;
+  }
+  .tp-link{display:flex;gap:6px;flex:1;min-width:220px;}
+  .tp-link input{
+    flex:1;
+    min-width:0;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:12.5px;
+    background:#fff;
+    color:var(--text-muted);
+  }
+  .tp-groups{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;}
+  .seg .who-btn{padding:9px 14px;}
+  .seg .who-btn.active{background:var(--ink);color:var(--paper-raise);border-color:var(--ink);}
+  .bloom-wrap{flex:1;min-width:0;overflow-x:auto;}
+  .bloom-table{margin-top:0;}
+  .bloom-table th{width:auto;}
+  .bloom-table td{text-align:center;font-variant-numeric:tabular-nums;}
+
+  /* ---- 모둠별 보기 ---- */
+  #group-view{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:16px;
+  }
+  .group-card{
+    background:var(--paper-raise);
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:18px;
+    min-width:0;
+  }
+  .group-card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .group-card-title{font-family:'Noto Serif KR',serif;font-weight:700;font-size:18px;}
+  .group-card-count{margin-left:auto;font-size:12px;color:var(--text-muted);}
+  .gv-sec{margin-top:14px;}
+  .gv-sec-title{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:13px;
+    color:#7c5f27;
+    margin-bottom:6px;
+  }
+  .gv-sec-title span{font-family:'Noto Sans KR',sans-serif;font-weight:400;color:var(--text-muted);font-size:11.5px;}
+
+  /* ---- 크게 띄우기 (프로젝터용) ---- */
+  #projector{
+    --pj:1;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:var(--paper);
+    overflow:auto;
+    padding:0 clamp(16px,4vw,56px) 48px;
+  }
+  .pj-bar{
+    position:sticky;
+    top:0;
+    z-index:2;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding:12px 0;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .pj-bar select{
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:#fff;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:13px;
+    color:var(--ink);
+  }
+  .pj-timer{
+    margin-left:auto;
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:26px;
+    font-variant-numeric:tabular-nums;
+    padding:2px 14px;
+    border:2px solid var(--gold);
+    border-radius:30px;
+  }
+  .pj-timer.done{border-color:var(--teamA);animation:pulse 1s ease-in-out infinite;}
+  .pj-title{
+    font-family:'Noto Serif KR',serif;
+    font-weight:700;
+    font-size:calc(clamp(22px,2.8vw,40px) * var(--pj));
+    line-height:1.45;
+    padding:6px 0 6px 20px;
+    border-left:4px solid var(--gold);
+    margin:28px 0 24px;
+  }
+  .pj-item{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:16px 20px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:12px;
+  }
+  .pj-item.teamA-item{border-color:var(--teamA-line);}
+  .pj-item.teamB-item{border-color:var(--teamB-line);}
+  .pj-text{flex:1;font-size:calc(clamp(19px,2.1vw,32px) * var(--pj));line-height:1.5;}
+  #projector .group-badge{font-size:calc(15px * var(--pj));padding:5px 12px;}
+  #projector .tag-btn{font-size:calc(15px * var(--pj));padding:6px 14px;}
+  #projector .team-label{font-size:calc(22px * var(--pj));margin-bottom:14px;}
+  #projector .ledger-num{font-size:calc(22px * var(--pj));}
+  #projector .star-btn{font-size:calc(24px * var(--pj));}
+  .pj-empty{color:var(--text-muted);font-size:calc(18px * var(--pj));padding:10px 2px;}
+  .pj-bars{max-width:1000px;}
+  .pj-bar-row{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
+  .pj-bar-label{flex:0 0 calc(90px * var(--pj));font-family:'Noto Serif KR',serif;font-weight:700;font-size:calc(24px * var(--pj));}
+  .pj-bar-track{flex:1;height:calc(42px * var(--pj));background:var(--paper-raise);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .pj-bar-fill{height:100%;min-width:0;padding:0 !important;border-radius:0 !important;border-width:0 1px 0 0 !important;background:var(--line);transition:width .3s ease;}
+  .pj-bar-num{flex:0 0 50px;font-family:'Noto Serif KR',serif;font-weight:700;font-size:calc(28px * var(--pj));font-variant-numeric:tabular-nums;}
+
+  /* ---- 스마트폰 화면 ---- */
+  @media (max-width:640px){
+    .gate-cards{flex-direction:column;}
+    .wrap{padding:20px 12px 110px;}
+    .stage-panel{padding:18px 14px;}
+    .tab{font-size:13px;padding:11px 4px 10px;}
+    .tab .tab-num{font-size:9.5px;}
+    .team-col{padding:14px 12px;}
+    .case-brief summary{padding:14px 16px;font-size:15px;}
+    .case-brief-body{padding:0 16px 18px;}
+    .qitem{flex-wrap:wrap;}
+    .qitem .qtext{flex:1 1 60%;}
+    .input-row input[type=text], #input-3{font-size:16px;} /* 아이폰 자동 확대 방지 */
+    .info-table th{width:76px;white-space:normal;}
+    .teacher-panel{padding:4px 14px;}
+    .tp-label{flex:0 0 100%;}
+    /* 원형 타이머가 제목을 가리지 않도록 화면 아래쪽으로 */
+    #timer-widget{top:auto;bottom:12px;}
+    .timer-presets{top:auto;bottom:106px;}
+    #toast{bottom:112px;}
+  }
+
+  /* ---- 3차시와 같은 방식으로 추가된 모양 ---- */
+  .btn.danger{background:var(--teamA);}
+  .gate-field select{
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Noto Sans KR',sans-serif;
+    font-size:16px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .gate-field select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .gate-actions{display:flex;flex-direction:column;gap:8px;}
+  .gate-user{font-size:12.5px;color:var(--text-muted);margin-bottom:6px;overflow-wrap:anywhere;}
+  .gate-user strong{color:#7c5f27;}
+  .gate-msg.info{background:var(--gold-soft);color:#7c5f27;border:1px solid var(--gold);margin-top:0;}
+  .uid-box{display:flex;gap:6px;align-items:center;margin-top:8px;}
+  .uid-box input{
+    flex:1;min-width:0;padding:7px 9px;border:1px solid var(--line);border-radius:6px;
+    font-family:monospace;font-size:12px;background:#fff;color:var(--ink);
+  }
+  .tp-state{font-size:12.5px;font-weight:700;color:var(--text-muted);min-width:34px;}
+  .tp-state.on, .sheet-state.on{color:var(--teamB);}
+  .sheet-state{font-size:12.5px;font-weight:700;color:var(--text-muted);}
+  .tp-sheet-input{
+    flex:1;min-width:200px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;
+    font-size:12.5px;background:#fff;color:var(--ink);
+  }
+  .status-scroll{flex:1;min-width:0;overflow-x:auto;}
+  .status-table{width:100%;border-collapse:collapse;background:#fff;}
+  .status-table th, .status-table td{
+    border:1px solid var(--line);padding:6px 8px;font-size:12.5px;text-align:center;white-space:nowrap;
+  }
+  .status-table th{background:var(--gold-soft);color:#7c5f27;font-family:'Noto Serif KR',serif;}
+  .status-table td.ok{color:var(--teamB);font-weight:700;}
+  .status-table td.no{color:#b9b09c;}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- 입장 화면: 학생은 수업 코드 + 모둠 / 교사는 구글 로그인 후 수업 만들기 -->
+<!-- ============================================================ -->
+<div id="gate-screen">
+  <div class="gate-wrap">
+    <div class="case-no">사건번호 2026 — 형사 — 104 · 법과사회 수행 워크시트</div>
+    <h1>법 없이는 죄도 없다</h1>
+    <div class="subtitle">죄형법정주의로 보는 사건 — 실시간 수업 입장 (1차시)</div>
+
+    <div class="gate-cards">
+      <div class="gate-card">
+        <div class="gate-card-title">학생</div>
+        <p>선생님께 받은 수업 코드와 우리 모둠을 입력하세요. 이름은 입력하지 않습니다.</p>
+        <div class="gate-field">
+          <label for="gate-code-input">수업 코드 (숫자 4자리)</label>
+          <input type="text" id="gate-code-input" inputmode="numeric" maxlength="4" placeholder="예: 4827" autocomplete="off">
+        </div>
+        <div class="gate-field">
+          <label for="gate-group-select">우리 모둠</label>
+          <select id="gate-group-select"></select>
+        </div>
+        <button class="btn" id="gate-join-btn">입장하기</button>
+      </div>
+
+      <div class="gate-card">
+        <div class="gate-card-title">교사</div>
+        <p>선생님 구글 계정으로 로그인한 뒤 새 수업을 열고, 학생들에게 알려줄 수업 코드를 만듭니다.</p>
+        <!-- 로그인 전 -->
+        <div class="gate-actions" id="gate-t-signedout">
+          <button class="btn" id="gate-login-btn">구글 계정으로 로그인</button>
+        </div>
+        <!-- 로그인 후 (교사 확인됨) -->
+        <div class="gate-actions" id="gate-t-ok" hidden>
+          <div class="gate-user" id="gate-t-user"></div>
+          <button class="btn" id="gate-create-btn">새 수업 만들기</button>
+          <div id="gate-my-rooms" class="gate-msg plain" hidden></div>
+          <button class="btn ghost small" id="gate-logout-btn">로그아웃</button>
+        </div>
+        <!-- 로그인했지만 교사로 등록되지 않은 계정 -->
+        <div class="gate-actions" id="gate-t-denied" hidden>
+          <div class="gate-msg info">
+            이 구글 계정은 아직 교사로 등록되지 않았습니다.<br>
+            Firebase 보안 규칙에 아래 <strong>계정 고유번호</strong>가 들어가 있어야 교사로 인정됩니다.
+            <div class="uid-box">
+              <input type="text" id="gate-uid" readonly onclick="this.select()" aria-label="계정 고유번호">
+              <button class="btn small" id="gate-uid-copy">복사</button>
+            </div>
+          </div>
+          <button class="btn ghost small" id="gate-logout-btn2">로그아웃</button>
+        </div>
+        <!-- 연습 모드 -->
+        <div class="gate-actions" id="gate-t-practice" hidden>
+          <button class="btn" id="gate-practice-btn">연습용 교사로 새 수업 만들기</button>
+          <div id="gate-my-rooms-p" class="gate-msg plain" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="gate-error" class="gate-msg error" hidden></div>
+    <div id="gate-mode-note" class="gate-msg warn" hidden>연습 모드입니다. 인터넷 저장소에 연결하지 않고, 이 컴퓨터의 같은 브라우저 창끼리만 내용이 공유됩니다. (교사 로그인 없이 연습할 수 있어요)</div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 수업 화면 (아래는 원래 화면 그대로 + 교사 패널)                  -->
+<!-- ============================================================ -->
+<div id="app-screen" hidden>
+
+<div id="timer-widget">
+  <div class="timer-label">TIMER</div>
+  <div class="timer-display" id="timer-display">00:00</div>
+  <div class="timer-controls teacher-only">
+    <button onclick="timerStartPause()" id="timer-startpause" title="시작/일시정지">▶</button>
+    <button onclick="timerReset()" title="초기화">⟲</button>
+  </div>
+</div>
+<div class="timer-presets teacher-only">
+  <button onclick="timerSet(1)">1분</button>
+  <button onclick="timerSet(5)">5분</button>
+  <button onclick="timerSet(10)">10분</button>
+  <button onclick="timerSet(15)">15분</button>
+  <button onclick="timerSet(20)">20분</button>
+</div>
+
+<div class="wrap">
+
+  <header>
+    <div class="case-no">사건번호 2026 — 형사 — 104 · 법과사회 수행 워크시트</div>
+    <h1>법 없이는 죄도 없다</h1>
+    <div class="subtitle">죄형법정주의로 보는 사건 — 지식습득 · 지식활용 · 지식창출 (1차시)</div>
+  </header>
+
+  <div class="room-bar">
+    <span class="role-badge" id="role-badge"></span>
+    <span class="room-code-label">수업 코드 <strong id="room-code-display">----</strong></span>
+    <span class="group-badge student-only" id="my-group-display"></span>
+    <button class="btn ghost small" onclick="leaveRoom()">나가기</button>
+  </div>
+
+  <div class="mode-note" id="mode-note" hidden></div>
+
+  <!-- 교사 패널 (교사 화면에서만 보임) -->
+  <div class="teacher-panel teacher-only">
+    <div class="tp-row">
+      <span class="tp-label">수업 코드</span>
+      <span class="big-code" id="tp-code">----</span>
+      <div class="tp-link">
+        <input type="text" id="share-link-input" readonly onclick="this.select()" aria-label="학생 접속 주소">
+        <button class="btn small" id="copy-link-btn">학생 링크 복사</button>
+      </div>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">학습자료</span>
+      <span class="tp-state" id="tp-material-state">잠김</span>
+      <button class="btn small" id="tp-material-btn" onclick="toggleMaterial()">열기</button>
+      <span class="tp-note">누르면 모든 학생 화면의 STAGE 1 학습자료가 함께 열리거나 잠깁니다.</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">모둠별 제출 현황</span>
+      <div class="status-scroll"><table class="status-table" id="status-table"></table></div>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">6단계 분류 현황</span>
+      <div class="bloom-wrap" id="bloom-counts"></div>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">화면 · 기록</span>
+      <button class="btn small" onclick="openProjector()">🖥 크게 띄우기 (프로젝터용)</button>
+      <button class="btn small" onclick="downloadCsv()">전체 기록 내려받기 (엑셀용 CSV)</button>
+      <button class="btn small" onclick="sendToSheet()">구글 시트에 기록하기</button>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">구글 시트 연결</span>
+      <span class="sheet-state" id="sheet-state">연결 안 됨</span>
+      <input type="text" id="sheet-url" class="tp-sheet-input" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" aria-label="구글 시트 연결 주소">
+      <button class="btn ghost small" onclick="saveSheetUrl()">저장</button>
+      <span class="tp-note">3차시에서 저장한 연결 주소가 있으면 자동으로 함께 씁니다.</span>
+    </div>
+    <div class="tp-row">
+      <span class="tp-label">수업 마무리</span>
+      <button class="btn ghost small" onclick="resetAll()">수업 데이터 전체 초기화</button>
+      <button class="btn small danger" onclick="endClass()">수업 종료 · 모든 기록 삭제</button>
+      <span class="tp-note">먼저 기록을 내려받거나 구글 시트에 기록한 뒤 종료하세요. 종료하면 이 수업 코드의 학생 입력이 서버에서 모두 지워지고, 학생 화면도 닫힙니다.</span>
+    </div>
+  </div>
+
+  <details class="case-brief" open>
+    <summary>사건 개요 열람 <span class="case-brief-tag">활동 시작 전 필독</span></summary>
+    <div class="case-brief-body">
+      <p>프로야구 스타 투수 김제혁은 어느 날 밤, 낯선 남자가 자신의 여동생을 성폭행하려는 현장을 목격했다. 격분한 김제혁은 그 남자를 붙잡아 무자비하게 폭행했고, 남자는 이 폭행으로 크게 다쳐 신체 기능에 중대한 장애를 입었다. 검사는 김제혁을 일반 상해가 아닌 <strong>중상해죄</strong>로 기소했고, 재판이 시작되었다.</p>
+
+      <p>재판의 쟁점은 조문의 말뜻이다. 중상해죄 조항은 사람의 신체를 상해하여 '생명에 대한 위험'을 발생하게 하거나 '불구' 또는 불치·난치의 질병에 이르게 한 경우를 일반 상해보다 훨씬 무겁게 처벌한다. 피해자는 생명에 위험이 있었던 것은 아니고, 한쪽 팔의 기능이 크게 떨어져 일상생활이 매우 불편해졌지만 완전히 쓰지 못하게 된 것은 아니다.</p>
+
+      <ul>
+        <li><strong>검사</strong>: 신체 기능에 중대한 장애가 생겼다면 조문의 '불구'에 해당하므로 중상해죄로 처벌할 수 있다.</li>
+        <li><strong>변호인</strong>: '불구'는 신체 일부를 잃거나 그 기능을 사실상 잃은 경우를 뜻한다. 기능이 크게 약해진 정도까지 넓혀 적용하는 것은 조문에 없는 요건을 만들어 형을 무겁게 하는 것이다.</li>
+      </ul>
+
+      <p>그런데 재판이 진행되던 중, 국회가 이 조항을 개정해 '신체 기능에 중대한 장애를 입힌 경우'를 중상해로 명시했다. 검사는 개정된 조항을 김제혁의 재판에도 적용해야 한다고 주장하고, 변호인은 행위가 있고 난 뒤에 만들어진 법으로 처벌할 수 없다고 반박한다.</p>
+
+      <div class="brief-question">죄형법정주의의 여러 원칙에 비추어 볼 때, 김제혁에게 중상해죄를 적용할 수 있는가?</div>
+      <span class="case-brief-source">※ 드라마 '슬기로운 감빵생활' 속 김제혁 사건을 수업용으로 각색한 사례입니다. (2차시와 동일한 사건) 조문 해석을 둘러싼 쟁점과 법 개정은 죄형법정주의 학습을 위해 새로 구성한 가상의 설정이며 실제 판례·법률과 다를 수 있습니다.</span>
+    </div>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-stage="1"><span class="tab-num">STAGE 1</span>지식습득</div>
+    <div class="tab" data-stage="2"><span class="tab-num">STAGE 2</span>지식활용</div>
+    <div class="tab" data-stage="3"><span class="tab-num">STAGE 3</span>지식창출</div>
+  </div>
+
+  <!-- STAGE 1 -->
+  <section class="stage-panel" id="panel-1">
+    <div class="stimulus">
+      "죄형법정주의란 무엇인가?"
+      <small>이 사건을 이해하기 위해 알아야 하는 지식은 무엇인가?</small>
+    </div>
+
+    <div class="hint-note" style="margin-top:0;">위 질문에 대한 자신의 생각을 대답으로 작성하세요.</div>
+
+    <div class="input-row student-only" style="align-items:center;">
+      <span class="group-badge" id="my-group-badge-1"></span>
+      <input type="text" id="input-1" maxlength="500" placeholder="대답을 입력하고 Enter 또는 추가">
+      <button class="btn" onclick="addQ(1)">대답 추가</button>
+    </div>
+
+    <ul class="qlist" id="list-1"></ul>
+    <div style="margin-top:16px;margin-bottom:26px;">
+      <button class="btn ghost small teacher-only" onclick="clearStage(1)">이 단계 초기화</button>
+    </div>
+
+    <div class="study-locked" id="study-locked">🔒 학습자료는 선생님이 열어 주면 볼 수 있어요.</div>
+
+    <details class="case-brief" id="study-material" hidden>
+      <summary>📖 학습자료 열람하기 — 형법과 죄형 법정주의 <span class="case-brief-tag">STAGE 1 학습</span></summary>
+      <div class="case-brief-body">
+
+        <div class="info-subhead">1. 형법의 의의와 기능</div>
+        <table class="info-table">
+          <tr><th>의미</th><td>범죄와 그에 대한 법적 효과로서 형사 제재(형벌과 보안 처분)를 규정한 법규범의 총체</td></tr>
+          <tr><th>형식적 의미의 형법</th><td>'형법'이라는 명칭이 붙여진 법률</td></tr>
+          <tr><th>실질적 의미의 형법</th><td>법의 명칭 및 형식을 불문하고 그에 대한 법적 효과로서 형벌과 보안 처분을 규정한 모든 법 규범</td></tr>
+          <tr><th>보호적 기능</th><td>개인이나 공동체의 존립을 해치거나 위협하는 행위를 범죄로 규정하여 형벌을 부과함으로써 법익과 사회 윤리를 보호</td></tr>
+          <tr><th>보장적 기능</th><td>국가 형벌권의 한계를 명확히 하여 자의적인 형벌권 남용으로부터 국민의 자유와 권리를 보장</td></tr>
+        </table>
+
+        <div class="info-subhead">2. 죄형 법정주의의 의미</div>
+        <table class="info-table">
+          <tr><th>의미</th><td>어떤 행위가 범죄가 되고 그 범죄에 대하여 어떤 형벌을 부과할 것인가가 행위자의 행위 이전에 미리 성문의 법률에 규정되어 있어야 한다는 원칙</td></tr>
+          <tr><th>근대적 의미<br>(형식적 죄형 법정주의)</th><td>"법률이 없으면 범죄도 없고 형벌도 없다."</td></tr>
+          <tr><th>현대적 의미<br>(실질적 죄형 법정주의)</th><td>"적정한 법률이 없으면 범죄도 없고 형벌도 없다."</td></tr>
+          <tr><th>등장 배경</th><td>국가 형벌권의 확장과 자의적 행사로부터 시민의 자유와 권리를 보장하려는 근대 인권 사상의 요청</td></tr>
+        </table>
+
+        <div class="info-subhead">3. 죄형 법정주의의 파생 원칙</div>
+        <table class="info-table">
+          <tr><th>관습 형법<br>금지의 원칙</th><td>
+            <ol>
+              <li>범죄와 형벌은 미리 성문의 법률로 규정되어야 한다는 원칙 (성문법률주의)</li>
+              <li>관습법을 근거로 일정한 행위를 범죄로 인정하거나 형벌을 부과하는 것을 금지한다는 것</li>
+            </ol>
+          </td></tr>
+          <tr><th>명확성의<br>원칙</th><td>
+            <ol>
+              <li>법률이 처벌하고자 하는 행위가 무엇이며 그에 대해 어떤 형벌이 부과되는지를 누구나 예견할 수 있도록 범죄의 구성 요건과 형벌을 명확하게 규정하여야 한다는 원칙</li>
+              <li>법관의 자의적 해석을 방지함</li>
+            </ol>
+          </td></tr>
+          <tr><th>유추해석<br>금지의 원칙</th><td>법률에 규정이 없는 사항에 대해서 그것과 유사한 성질을 가지는 사항에 관한 법률을 적용하여 행위자에게 불리한 새로운 구성 요건을 만들거나 형을 가중할 수 없다는 원칙</td></tr>
+          <tr><th>형벌 불소급의<br>원칙</th><td>
+            <ol>
+              <li>소급효 금지의 원칙</li>
+              <li>범죄와 형벌은 행위 시의 법률에 의해 결정되어야 하기 때문에 법률 시행 이전의 행위에 소급하여 적용할 수 없음</li>
+            </ol>
+          </td></tr>
+          <tr><th>적정성의<br>원칙</th><td>
+            <ol>
+              <li>비례성의 원칙</li>
+              <li>범죄와 형벌을 규정하는 법률의 내용이 기본적 인권을 보장할 수 있도록 적정해야 한다는 원칙</li>
+              <li>범죄 행위의 경중과 행위자가 부담해야 할 형사 책임이 균형을 갖추어야 함</li>
+            </ol>
+          </td></tr>
+        </table>
+
+        <div class="info-subhead">4. 형법 제1조 (범죄의 성립과 처벌)</div>
+        <table class="info-table">
+          <tr><th>제1항</th><td>범죄의 성립과 처벌은 행위 시의 법률에 따른다.</td></tr>
+          <tr><th>제2항</th><td>범죄 후 법률이 변경되어 그 행위가 범죄를 구성하지 아니하게 되거나 형이 구법보다 가벼워진 경우에는 신법에 따른다.</td></tr>
+          <tr><th>제3항</th><td>재판이 확정된 후 법률이 변경되어 그 행위가 범죄를 구성하지 아니하게 된 경우에는 형의 집행을 면제한다.</td></tr>
+        </table>
+        <p style="margin-top:10px;">소급효 금지의 원칙은 범죄의 성립과 그 처벌은 행위 당시의 법률에 의해야 하고 행위 후에 제정된 사후 법률에 의해 이전의 행위를 처벌해서는 안 된다는 것을 말한다. 이 원칙은 법적 안정성 등의 측면에서 대단히 중요한 원칙이며, 형법 제1조 제1항에 명시되어 있어 '행위시법주의'라고도 한다. 다만 형법 제1조 제2항과 제3항처럼 행위자에게 유리한 경우에는 소급효가 인정된다.</p>
+
+        <div class="info-subhead">5. 핵심 단어</div>
+        <table class="info-table">
+          <tr><th>법익</th><td>개인, 사회, 국가가 평화로운 공존 질서를 유지하기 위해 법률을 통해 보호해야 할 가치 또는 이익</td></tr>
+          <tr><th>관습법</th><td>사회에서 반복적으로 나타나는 관행이 사회 구성원 대다수의 법적 확신에 의하여 법 규범으로 승인되어 지켜지고 있는 것</td></tr>
+          <tr><th>소급효</th><td>법률이나 법 요건의 효력이 법률 시행 전 또는 법 요건 성립 이전으로 돌아가 생기는 것</td></tr>
+        </table>
+
+        <span class="case-brief-source">※ 대전이문고등학교 법과사회 학습지(국가 생활과 법 — 형법과 형사 절차, 형법과 죄형 법정주의)를 바탕으로 정리했습니다.</span>
+      </div>
+    </details>
+  </section>
+
+  <!-- STAGE 2 -->
+  <section class="stage-panel" id="panel-2" hidden>
+    <div class="stimulus" style="margin-bottom:8px;">
+      <strong>교사의 큰 질문 —</strong> 죄형법정주의의 여러 원칙에 비추어 볼 때, 김제혁에게 중상해죄를 적용할 수 있는가?
+      <small>앞서 학습한 죄형법정주의 원칙을 근거로, 각자의 입장에서 법적 주장을 만들어보세요.</small>
+    </div>
+
+    <div class="section-title" style="margin-top:0;">① 대리인 주장 작성</div>
+    <div class="versus">
+      <div class="team-col teamA">
+        <div class="team-label">검사 측</div>
+        <div class="team-stance">"'불구'에 해당하고 개정 법률의 취지에 비추어 처벌할 수 있다"</div>
+        <div class="input-row student-only">
+          <input type="text" id="input-arg-2A" maxlength="500" placeholder="주장 입력">
+          <button class="btn small" onclick="addArg('2A')">추가</button>
+        </div>
+        <ul class="qlist" id="list-arg-2A"></ul>
+      </div>
+
+      <div class="divider">
+        <svg width="30" height="60" viewBox="0 0 30 60" fill="none">
+          <line x1="15" y1="4" x2="15" y2="56" stroke="#B08D57" stroke-width="2"/>
+          <circle cx="15" cy="4" r="3" fill="#B08D57"/>
+          <line x1="4" y1="14" x2="26" y2="14" stroke="#B08D57" stroke-width="1.4"/>
+          <line x1="4" y1="14" x2="4" y2="22" stroke="#B08D57" stroke-width="1.4"/>
+          <line x1="26" y1="14" x2="26" y2="22" stroke="#B08D57" stroke-width="1.4"/>
+        </svg>
+      </div>
+
+      <div class="team-col teamB">
+        <div class="team-label">변호인 측</div>
+        <div class="team-stance">"조문을 넓혀 해석한 유추해석이고, 사후에 만든 법은 적용할 수 없다"</div>
+        <div class="input-row student-only">
+          <input type="text" id="input-arg-2B" maxlength="500" placeholder="주장 입력">
+          <button class="btn small" onclick="addArg('2B')">추가</button>
+        </div>
+        <ul class="qlist" id="list-arg-2B"></ul>
+      </div>
+    </div>
+
+    <div class="section-title">② 상대측 주장에 대해 궁금한 점</div>
+    <div class="lvl-legend">
+      <span>지식·이해 — 습득</span>
+      <span>적용·분석 — 활용</span>
+      <span>종합·평가 — 창출</span>
+    </div>
+    <div class="hint-note">💡 표시는 참고용 추천입니다. 최종 분류는 직접 판단해서 정하세요.</div>
+
+    <div class="versus">
+      <div class="team-col teamA">
+        <div class="team-label">검사 측</div>
+        <div class="team-stance">변호인 측 주장에 궁금한 점</div>
+        <div class="input-row student-only">
+          <input type="text" id="input-2A" maxlength="500" placeholder="질문 입력">
+          <button class="btn small" onclick="addQ('2A')">추가</button>
+        </div>
+        <ul class="qlist" id="list-2A"></ul>
+      </div>
+
+      <div class="divider">
+        <svg width="30" height="60" viewBox="0 0 30 60" fill="none">
+          <line x1="15" y1="4" x2="15" y2="56" stroke="#B08D57" stroke-width="2"/>
+          <circle cx="15" cy="4" r="3" fill="#B08D57"/>
+          <line x1="4" y1="14" x2="26" y2="14" stroke="#B08D57" stroke-width="1.4"/>
+          <line x1="4" y1="14" x2="4" y2="22" stroke="#B08D57" stroke-width="1.4"/>
+          <line x1="26" y1="14" x2="26" y2="22" stroke="#B08D57" stroke-width="1.4"/>
+        </svg>
+      </div>
+
+      <div class="team-col teamB">
+        <div class="team-label">변호인 측</div>
+        <div class="team-stance">검사 측 주장에 궁금한 점</div>
+        <div class="input-row student-only">
+          <input type="text" id="input-2B" maxlength="500" placeholder="질문 입력">
+          <button class="btn small" onclick="addQ('2B')">추가</button>
+        </div>
+        <ul class="qlist" id="list-2B"></ul>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <button class="btn ghost small teacher-only" onclick="clearStage(2)">이 단계 초기화</button>
+    </div>
+  </section>
+
+  <!-- STAGE 3 -->
+  <section class="stage-panel" id="panel-3" hidden>
+    <div class="stimulus" style="margin-bottom:14px;">
+      죄형법정주의의 원칙에 따라 판단할 때, 이 사건은 어떻게 판결할 수 있는가?
+    </div>
+
+    <div class="mediator-input student-only">
+      <div class="who-select">
+        <button class="who-btn N active" data-who="N" onclick="setWho(this,'N')">재판부</button>
+      </div>
+      <input type="text" id="input-3" maxlength="500" placeholder="판단 항목을 입력하세요" style="flex:1;min-width:200px;padding:11px 14px;border:1px solid var(--line);border-radius:7px;font-size:14px;">
+      <button class="btn" onclick="addLedger()">기록</button>
+    </div>
+
+    <div class="ledger" id="ledger"></div>
+
+    <div style="margin-top:16px;">
+      <button class="btn ghost small teacher-only" onclick="clearStage(3)">이 단계 초기화</button>
+    </div>
+  </section>
+
+  <div class="footer-note">입력한 내용은 수업 코드 단위로만 저장되며, 수업이 끝나면 선생님이 삭제합니다 · 이름 등 개인정보는 수집하지 않습니다<br>다음 차시에서는 이 사건을 범죄 성립요건(구성요건해당성·위법성·책임) 측면에서 다시 살펴봅니다.</div>
+</div>
+
+
+</div><!-- /app-screen -->
+
+<!-- 크게 띄우기 (프로젝터용, 교사 화면에서만 열림) -->
+<div id="projector" hidden>
+  <div class="pj-bar">
+    <div class="seg" id="pj-tabs">
+      <button class="who-btn" data-pj="s1" onclick="setPjMode('s1')">STAGE 1 대답</button>
+      <button class="who-btn" data-pj="arg" onclick="setPjMode('arg')">STAGE 2 주장</button>
+      <button class="who-btn" data-pj="q" onclick="setPjMode('q')">STAGE 2 궁금한 점</button>
+      <button class="who-btn" data-pj="s3" onclick="setPjMode('s3')">STAGE 3 판단 근거</button>
+      <button class="who-btn" data-pj="bloom" onclick="setPjMode('bloom')">6단계 현황</button>
+    </div>
+    <select id="pj-group" onchange="renderProjector()" aria-label="모둠 고르기"></select>
+    <button class="btn ghost small" onclick="pjZoom(-0.15)" title="글자 작게">가 −</button>
+    <button class="btn ghost small" onclick="pjZoom(0.15)" title="글자 크게">가 +</button>
+    <span class="pj-timer" id="pj-timer">00:00</span>
+    <button class="btn small" onclick="closeProjector()">닫기 ✕</button>
+  </div>
+  <div id="pj-body"></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Firebase (여러 기기 실시간 공유 · 교사 로그인) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+  /* =========================================================
+   * 설정 (이 차시)
+   * ========================================================= */
+  const GROUP_COUNT = 5;            // 모둠 개수 (필요하면 숫자만 바꾸세요. 9모둠까지 가능)
+  const LESSON = {
+    key: 'law1',                    // Firebase 안의 저장 칸 (1차시)
+    no: '1차시',
+    file: '죄형법정주의-1차시',
+    titles: {
+      s1:  '"죄형법정주의란 무엇인가?"',
+      arg: '죄형법정주의의 여러 원칙에 비추어 볼 때, 김제혁에게 중상해죄를 적용할 수 있는가?',
+      s3:  '죄형법정주의의 원칙에 따라 판단할 때, 이 사건은 어떻게 판결할 수 있는가?'
+    }
+  };
+
+  /* Firebase 콘솔 > 프로젝트 설정 > 내 앱 에 나오는 값 (1·2·3차시 같은 프로젝트) */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCdXEv10L0yhHRWmx8TxtXoN7oS1emtYi0",
+    authDomain: "no-penalty-without-a-law.firebaseapp.com",
+    databaseURL: "https://no-penalty-without-a-law-default-rtdb.firebaseio.com",
+    projectId: "no-penalty-without-a-law",
+    storageBucket: "no-penalty-without-a-law.firebasestorage.app",
+    messagingSenderId: "878772318049",
+    appId: "1:878772318049:web:1aefb1b2a3c18f0c465f20"
+  };
+
+  /* =========================================================
+   * 서버 연결부 (Backend)
+   * 이 차시 기록은 Firebase 안의 LESSON.key 칸('law1' 또는 'law2')에만 저장합니다.
+   *   {칸}/rooms/{수업코드}/meta   : 만든 시각, 만든 교사       ← 교사만 쓰기
+   *   {칸}/rooms/{수업코드}/ctrl   : 학습자료 공개, 타이머       ← 교사만 쓰기
+   *   {칸}/rooms/{수업코드}/items  : 모둠별 입력 (대답·주장·궁금한 점·판단 근거)
+   *   {칸}/teacher                 : 교사 전용 (내 수업 목록, 구글 시트 주소) ← 교사만 읽기·쓰기
+   * 교사인지는 Firebase 보안 규칙(서버)이 구글 계정 고유번호로 확인합니다.
+   *
+   * 주소 끝에 ?practice=1 을 붙이거나 파일을 더블클릭해 열면 '연습 모드'로,
+   * 인터넷 없이 이 컴퓨터의 같은 브라우저 창끼리만 공유됩니다.
+   * ========================================================= */
+  const params = new URLSearchParams(location.search);
+
+  function withTimeout(promise, ms){
+    return Promise.race([
+      promise,
+      new Promise((_, reject)=>setTimeout(()=>reject(new Error('연결 시간 초과')), ms))
+    ]);
+  }
+  function setPath(obj, path, value){
+    const parts = path.split('/');
+    let o = obj;
+    for(let i=0;i<parts.length-1;i++){
+      if(typeof o[parts[i]]!=='object' || o[parts[i]]===null) o[parts[i]] = {};
+      o = o[parts[i]];
+    }
+    const last = parts[parts.length-1];
+    if(value===null) delete o[last]; else o[last] = value;
+  }
+  function isDenied(e){
+    return !!e && (e.code==='PERMISSION_DENIED' || /permission[_ ]denied/i.test(e.message||''));
+  }
+
+  const LocalBackend = {
+    mode:'practice',
+    _key(code){ return LESSON.key+'p_room_'+code; },
+    _read(code){ try{ return JSON.parse(localStorage.getItem(this._key(code))); }catch(e){ return null; } },
+    _subs:[],
+    _ping(){ this._subs.forEach(f=>f()); },
+    now(){ return Date.now(); },
+    newId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); },
+    onAuth(cb){ cb(null); },
+    async roomMeta(code){ const o = this._read(code); return o ? (o.meta || null) : null; },
+    async createRoom(code, data){ localStorage.setItem(this._key(code), JSON.stringify(data)); this._ping(); },
+    async deleteRoom(code){ localStorage.removeItem(this._key(code)); this._ping(); },
+    // updates: { '경로/경로': 값 }  (값이 null이면 삭제)
+    async update(code, updates){
+      const obj = this._read(code);
+      if(!obj) return;
+      Object.keys(updates).forEach(p=>setPath(obj, p, updates[p]));
+      localStorage.setItem(this._key(code), JSON.stringify(obj));
+      this._ping();
+    },
+    subscribe(code, cb){
+      let last;
+      const check = ()=>{
+        const raw = localStorage.getItem(this._key(code));
+        if(raw===last) return;
+        last = raw;
+        let val = null;
+        try{ val = raw ? JSON.parse(raw) : null; }catch(e){}
+        cb(val);
+      };
+      this._subs.push(check);
+      window.addEventListener('storage', check);
+      const iv = setInterval(check, 700);
+      check();
+      return ()=>{ window.removeEventListener('storage', check); clearInterval(iv); this._subs = this._subs.filter(f=>f!==check); };
+    },
+    _myKey(){ return LESSON.key+'p_teacher_rooms'; },
+    async myRooms(){ try{ return JSON.parse(localStorage.getItem(this._myKey())) || {}; }catch(e){ return {}; } },
+    async addMyRoom(code, ts){ const m = await this.myRooms(); m[code] = ts; localStorage.setItem(this._myKey(), JSON.stringify(m)); },
+    async removeMyRoom(code){ const m = await this.myRooms(); delete m[code]; localStorage.setItem(this._myKey(), JSON.stringify(m)); },
+    async getSetting(key){ try{ return localStorage.getItem('law3p_setting_'+key) || ''; }catch(e){ return ''; } },
+    async setSetting(key, val){ localStorage.setItem('law3p_setting_'+key, val); }
+  };
+
+  const FirebaseBackend = {
+    mode:'firebase',
+    _offset:0,   // 이 기기 시계와 서버 시계의 차이 (타이머를 모든 기기에서 똑같이 맞추는 데 사용)
+    user:null,
+    init(){
+      firebase.initializeApp(firebaseConfig);
+      this.db = firebase.database();
+      this.auth = firebase.auth();
+      this.db.ref('.info/serverTimeOffset').on('value', s=>{ this._offset = s.val() || 0; });
+      this.db.ref('.info/connected').on('value', s=>onConnection(!!s.val()));
+    },
+    _room(code){ return this.db.ref(LESSON.key+'/rooms/'+code); },
+    _teacher(path){ return this.db.ref(LESSON.key+'/teacher'+(path ? '/'+path : '')); },
+    now(){ return Date.now() + this._offset; },
+    newId(){ return this.db.ref().push().key; },
+    onAuth(cb){ this.auth.onAuthStateChanged(u=>{ this.user = u; cb(u); }); },
+    async signIn(){
+      const p = new firebase.auth.GoogleAuthProvider();
+      p.setCustomParameters({prompt:'select_account'});
+      await this.auth.signInWithPopup(p);
+    },
+    async signOut(){ await this.auth.signOut(); },
+    // 서버의 교사 전용 칸을 읽어 보고, 허락되면 교사
+    async isTeacher(){
+      try{ await withTimeout(this._teacher().once('value'), 10000); return true; }
+      catch(e){ if(isDenied(e)) return false; throw e; }
+    },
+    async roomMeta(code){
+      const snap = await withTimeout(this._room(code).child('meta').once('value'), 10000);
+      return snap.val();
+    },
+    async createRoom(code, data){ await withTimeout(this._room(code).set(data), 10000); },
+    async deleteRoom(code){ await withTimeout(this._room(code).remove(), 10000); },
+    async update(code, updates){ await this._room(code).update(updates); },
+    subscribe(code, cb){
+      const ref = this._room(code);
+      const h = ref.on('value', s=>cb(s.val()), e=>{
+        console.error(e);
+        toast('수업 내용을 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
+      });
+      return ()=>ref.off('value', h);
+    },
+    async myRooms(){
+      const s = await withTimeout(this._teacher('rooms').once('value'), 10000);
+      return s.val() || {};
+    },
+    async addMyRoom(code, ts){ await withTimeout(this._teacher('rooms/'+code).set(ts), 10000); },
+    async removeMyRoom(code){ await withTimeout(this._teacher('rooms/'+code).remove(), 10000); },
+    // 교사 전용 설정 (구글 시트 연결 주소 등) — 없으면 3차시에서 저장한 값을 함께 씀
+    async getSetting(key){
+      const s = await withTimeout(this._teacher('settings/'+key).once('value'), 10000);
+      if(s.val()) return s.val();
+      try{
+        const s3 = await withTimeout(this.db.ref('law3/teacher/settings/'+key).once('value'), 10000);
+        return s3.val() || '';
+      }catch(e){ return ''; }
+    },
+    async setSetting(key, val){ await withTimeout(this._teacher('settings/'+key).set(val || null), 10000); }
+  };
+
+  let everConnected = false;
+  let backend = LocalBackend;
+  const wantPractice = params.has('practice') || location.protocol==='file:';
+  if(!wantPractice && window.firebase){
+    try{ FirebaseBackend.init(); backend = FirebaseBackend; }
+    catch(e){ console.error(e); }
+  }
+  const PRACTICE = backend.mode==='practice';
+
+  // 인터넷 연결 상태 표시
+  function onConnection(connected){
+    const note = document.getElementById('mode-note');
+    if(connected){ everConnected = true; note.hidden = true; return; }
+    if(everConnected){
+      note.textContent = '인터넷 연결이 끊겼습니다. 다시 연결되면 자동으로 이어집니다.';
+      note.hidden = false;
+    }
+  }
+
+  /* =========================================================
+   * Bloom 6단계 분류 & 추천 힌트 (원래 그대로)
+   * ========================================================= */
+  const LEVELS = ['지식','이해','적용','분석','종합','평가'];
+
+  // 키워드 기반 참고용 추천 (우선순위: 고차원 → 저차원)
+  const SUGGEST_RULES = [
+    {level:'평가', patterns:['타당','정당','옳','바람직','책임이 있','누구의 책임','어느 쪽이','판단해야','평가할']},
+    {level:'종합', patterns:['제안','대안','새로운 제도','고안','설계','바꿔야','개선','만든다면','만들려면']},
+    {level:'분석', patterns:['차이','비교','원인','구별','구성','요소','관계가','근거는 무엇','근거가 무엇']},
+    {level:'적용', patterns:['이 경우','이 사례','적용','실제로','만약','라면 어떻게']},
+    {level:'이해', patterns:['왜','이유','의미','뜻','어떻게 다른','설명해']},
+    {level:'지식', patterns:['무엇인가','누가','언제','어디서','얼마','몇','정의']},
+  ];
+  function suggestLevel(text){
+    for(const rule of SUGGEST_RULES){
+      if(rule.patterns.some(p=>text.includes(p))) return rule.level;
+    }
+    return null;
+  }
+
+  /* =========================================================
+   * 이 기기의 정보 / 수업 내용
+   * ========================================================= */
+  let ROOM = null;      // 수업 코드 (4자리 숫자)
+  let ROLE = null;      // 'teacher' | 'student'
+  let GROUP = null;     // 학생의 모둠 번호 (문자열)
+  let room = null;      // 수업방 전체 내용 (실시간으로 갱신됨)
+  let ITEMS = [];       // 학생 입력 목록 (시간순)
+  let unsubscribe = null;
+  const SIDE_LABEL = {A:'검사 측', B:'변호인 측'};
+  const SESSION_KEY = LESSON.key+'_session';
+  const isTeacher = ()=> ROLE==='teacher';
+
+  const $ = id => document.getElementById(id);
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function groupBadge(g){
+    return g ? `<span class="group-badge">${escapeHtml(g)}모둠</span>` : '';
+  }
+  // 학생은 우리 모둠 것만, 교사는 전부 고치거나 지울 수 있음
+  function canModify(item){
+    return isTeacher() || (GROUP!==null && item.group===GROUP);
+  }
+  function groupsNums(){ return Array.from({length:GROUP_COUNT}, (_,i)=>String(i+1)); }
+
+  /* ---- 안내 메시지(잠깐 떴다 사라짐) ---- */
+  const toastEl = $('toast');
+  let toastTimeout = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    if(toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(()=>toastEl.classList.remove('show'), 2600);
+  }
+  function storeError(e){
+    console.error(e);
+    toast(isDenied(e) ? '권한이 없어 저장하지 못했습니다.' : '저장에 실패했습니다. 인터넷 연결을 확인해주세요.');
+  }
+  function save(updates){
+    if(!ROOM) return Promise.resolve();
+    return backend.update(ROOM, updates).catch(storeError);
+  }
+  function copyText(input, btn){
+    const done = ()=>{ const t = btn.textContent; btn.textContent = '복사됨!'; setTimeout(()=>{ btn.textContent = t; }, 1500); };
+    input.select();
+    input.setSelectionRange(0, 99999);
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(input.value).then(done).catch(()=>{ document.execCommand('copy'); done(); });
+    } else { document.execCommand('copy'); done(); }
+  }
+  function pageBase(){ return location.href.split('#')[0].split('?')[0]; }
+  function practiceSuffix(){ return params.has('practice') ? '&practice=1' : ''; }
+  function setUrl(code, asTeacher){
+    try{
+      const url = new URL(location.href);
+      if(code) url.searchParams.set('code', code); else url.searchParams.delete('code');
+      if(asTeacher) url.searchParams.set('role','teacher'); else url.searchParams.delete('role');
+      history.replaceState(null,'',url);
+    }catch(e){ /* 일부 환경에서는 주소 변경이 막혀 있어도 동작에는 문제 없음 */ }
+  }
+
+  /* =========================================================
+   * 쓰다가 아직 추가하지 않은 글 임시 보관 (새로고침해도 되살림)
+   * ========================================================= */
+  const DRAFT_IDS = ['input-1','input-arg-2A','input-arg-2B','input-2A','input-2B','input-3'];
+  function draftKey(){ return LESSON.key+'_draft_'+ROOM+'_'+GROUP; }
+  function saveDraft(){
+    if(!ROOM || !GROUP || isTeacher()) return;
+    const d = {};
+    DRAFT_IDS.forEach(id=>{ d[id] = $(id).value; });
+    try{ localStorage.setItem(draftKey(), JSON.stringify(d)); }catch(e){}
+  }
+  function restoreDraft(){
+    let d = {};
+    try{ d = JSON.parse(localStorage.getItem(draftKey())) || {}; }catch(e){}
+    DRAFT_IDS.forEach(id=>{ $(id).value = d[id] || ''; });
+  }
+  DRAFT_IDS.forEach(id=>$(id).addEventListener('input', saveDraft));
+
+  /* =========================================================
+   * 입장 화면
+   * ========================================================= */
+  const gateScreen = $('gate-screen');
+  const appScreen = $('app-screen');
+  function showGateError(msg){ $('gate-error').textContent = msg; $('gate-error').hidden = false; }
+  function hideGateError(){ $('gate-error').hidden = true; }
+
+  $('gate-group-select').innerHTML = '<option value="">모둠 선택</option>' +
+    groupsNums().map(g=>`<option value="${g}">${g}모둠</option>`).join('');
+
+  let teacherOk = false;
+  function showTeacherCard(which){
+    ['signedout','ok','denied','practice'].forEach(k=>{ $('gate-t-'+k).hidden = (k!==which); });
+  }
+  function authErrorMessage(e){
+    const c = (e && e.code) || '';
+    if(c==='auth/popup-closed-by-user' || c==='auth/cancelled-popup-request') return '';
+    if(c==='auth/popup-blocked') return '로그인 창이 차단되었습니다. 주소창 오른쪽의 팝업 차단 표시를 눌러 허용한 뒤 다시 눌러주세요.';
+    if(c==='auth/unauthorized-domain') return '이 주소는 Firebase 로그인 허용 목록에 없습니다. (Firebase "승인된 도메인"을 확인해주세요)';
+    if(c==='auth/operation-not-allowed') return 'Firebase에서 Google 로그인이 켜져 있지 않습니다.';
+    return '로그인하지 못했습니다. ('+((e && e.message) || c)+')';
+  }
+  async function teacherLogin(){
+    hideGateError();
+    try{ await backend.signIn(); }
+    catch(e){ const m = authErrorMessage(e); if(m) showGateError(m); }
+  }
+  async function teacherLogout(){
+    try{ await backend.signOut(); }catch(e){ console.error(e); }
+  }
+  async function onAuthChanged(user){
+    teacherOk = false;
+    const code = (params.get('code')||'').trim();
+    if(PRACTICE){
+      showTeacherCard('practice'); teacherOk = true;
+      await renderGateTeacherRooms();
+      if(!ROOM && params.get('role')==='teacher' && (await backend.myRooms())[code] && (await backend.roomMeta(code))){
+        enterRoom(code, 'teacher', null);
+      }
+      return;
+    }
+    if(!user){ showTeacherCard('signedout'); return; }
+    try{
+      teacherOk = await backend.isTeacher();
+    }catch(e){
+      console.error(e);
+      showGateError('서버에 연결하지 못했습니다. 인터넷 연결을 확인해주세요. ('+e.message+')');
+      showTeacherCard('signedout');
+      return;
+    }
+    if(!teacherOk){
+      $('gate-uid').value = user.uid;
+      showTeacherCard('denied');
+      return;
+    }
+    $('gate-t-user').innerHTML = '<strong>교사 확인됨</strong> · ' + escapeHtml(user.email || '');
+    showTeacherCard('ok');
+    await renderGateTeacherRooms();
+    // 새로고침했을 때 교사 화면으로 바로 돌아가기
+    if(!ROOM && params.get('role')==='teacher' && /^\d{4}$/.test(code)){
+      try{
+        const meta = await backend.roomMeta(code);
+        if(meta && meta.owner===user.uid) enterRoom(code, 'teacher', null);
+      }catch(e){ console.error(e); }
+    }
+  }
+
+  // ---- 교사: 새 수업 만들기 ----
+  async function createRoom(){
+    hideGateError();
+    if(!teacherOk){ showGateError('교사 로그인이 필요합니다.'); return; }
+    try{
+      let code = null;
+      for(let i=0;i<30;i++){
+        const c = String(Math.floor(1000+Math.random()*9000));
+        if(!(await backend.roomMeta(c))){ code = c; break; }
+      }
+      if(!code){ showGateError('수업 코드를 만들지 못했습니다. 다시 시도해주세요.'); return; }
+      const now = backend.now();
+      await backend.createRoom(code, {
+        meta:{createdAt:now, owner: PRACTICE ? 'practice' : backend.user.uid},
+        ctrl:{materialOpen:false, timer:{seconds:0, running:false, endTime:0, done:false}}
+      });
+      await backend.addMyRoom(code, now);
+      setUrl(code, true);
+      enterRoom(code, 'teacher', null);
+    }catch(e){
+      console.error(e);
+      showGateError(isDenied(e)
+        ? '서버가 수업 만들기를 허락하지 않았습니다. Firebase 보안 규칙에 '+LESSON.no+' 칸('+LESSON.key+')이 들어갔는지 확인해주세요.'
+        : '수업을 만들지 못했습니다. ('+e.message+')');
+    }
+  }
+
+  // ---- 교사: 진행 중인 내 수업 (24시간 지난 수업은 자동 삭제) ----
+  async function renderGateTeacherRooms(){
+    const box = PRACTICE ? $('gate-my-rooms-p') : $('gate-my-rooms');
+    const alive = [];
+    try{
+      const mine = await backend.myRooms();
+      for(const c of Object.keys(mine)){
+        const meta = await backend.roomMeta(c);
+        if(!meta){ await backend.removeMyRoom(c); continue; }
+        if(meta.createdAt && backend.now() - meta.createdAt > 24*60*60*1000){
+          await backend.deleteRoom(c);
+          await backend.removeMyRoom(c);
+          continue;
+        }
+        alive.push(c);
+      }
+    }catch(e){ console.error(e); }
+    box.hidden = alive.length===0;
+    box.innerHTML = alive.length ? '진행 중인 내 수업: ' + alive.map(c=>
+      `<button class="btn ghost small" onclick="reenterAsTeacher('${c}')">${c} 다시 들어가기</button>`).join(' ') : '';
+  }
+  async function reenterAsTeacher(code){
+    hideGateError();
+    try{
+      const meta = await backend.roomMeta(code);
+      if(!meta){ showGateError('이미 종료된 수업입니다.'); renderGateTeacherRooms(); return; }
+      setUrl(code, true);
+      enterRoom(code, 'teacher', null);
+    }catch(e){ showGateError('수업에 들어가지 못했습니다. ('+e.message+')'); }
+  }
+
+  // ---- 학생: 코드와 모둠으로 입장 ----
+  async function joinRoom(){
+    hideGateError();
+    const code = $('gate-code-input').value.trim();
+    const group = $('gate-group-select').value;
+    if(!/^\d{4}$/.test(code)){ showGateError('수업 코드 4자리 숫자를 입력해주세요.'); return; }
+    if(!group){ showGateError('우리 모둠을 선택해주세요.'); return; }
+    try{
+      if(!(await backend.roomMeta(code))){ showGateError('없는 수업 코드입니다. 선생님께 코드를 다시 확인해주세요.'); return; }
+      try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify({code, group})); }catch(e){}
+      setUrl(code, false);
+      enterRoom(code, 'student', group);
+    }catch(e){
+      console.error(e);
+      showGateError('접속하지 못했습니다. 인터넷 연결을 확인해주세요. ('+e.message+')');
+    }
+  }
+
+  $('gate-join-btn').addEventListener('click', joinRoom);
+  ['gate-code-input','gate-group-select'].forEach(id=>{
+    $(id).addEventListener('keydown', e=>{ if(e.key==='Enter') joinRoom(); });
+  });
+  $('gate-login-btn').addEventListener('click', teacherLogin);
+  $('gate-logout-btn').addEventListener('click', teacherLogout);
+  $('gate-logout-btn2').addEventListener('click', teacherLogout);
+  $('gate-create-btn').addEventListener('click', createRoom);
+  $('gate-practice-btn').addEventListener('click', createRoom);
+  $('gate-uid-copy').addEventListener('click', ()=>copyText($('gate-uid'), $('gate-uid-copy')));
+
+  /* =========================================================
+   * 수업 화면 들어가기 / 나가기 / 종료
+   * ========================================================= */
+  function enterRoom(code, role, group){
+    if(ROOM) return;
+    ROOM = code; ROLE = role; GROUP = group;
+    gateScreen.hidden = true;
+    appScreen.hidden = false;
+    hideGateError();
+    document.body.classList.remove('role-teacher','role-student');
+    document.body.classList.add(role==='teacher' ? 'role-teacher' : 'role-student');
+
+    const roleBadge = $('role-badge');
+    roleBadge.textContent = role==='teacher' ? '교사 화면' : '학생 화면';
+    roleBadge.className = 'role-badge ' + role;
+    $('room-code-display').textContent = code;
+    $('tp-code').textContent = code;
+    $('my-group-display').textContent = group ? group+'모둠' : '';
+    $('my-group-badge-1').textContent = group ? group+'모둠' : '';
+    $('share-link-input').value = pageBase() + '?code=' + code + practiceSuffix();
+
+    room = null; ITEMS = []; lastMaterialOpen = null; savedCount = -1;
+    if(isTeacher()){ DRAFT_IDS.forEach(id=>{ $(id).value = ''; }); loadSheetUrl(); }
+    else restoreDraft();
+    unsubscribe = backend.subscribe(code, onRoom);
+  }
+
+  function onRoom(snap){
+    if(!snap){
+      backToGate(room ? '수업이 종료되어 기록이 삭제되었습니다.' : '없는 수업 코드입니다.');
+      return;
+    }
+    room = snap;
+    const o = room.items || {};
+    ITEMS = Object.keys(o).map(id=>Object.assign(
+      {id, level:null, suggestion:null, star:false, side:null, group:''}, o[id]
+    )).sort((a,b)=>((a.ts||0)-(b.ts||0)) || (a.id<b.id ? -1 : 1));
+    renderAll();
+  }
+
+  function backToGate(msg){
+    closeProjector();
+    if(unsubscribe){ unsubscribe(); unsubscribe = null; }
+    try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+    ROOM = null; ROLE = null; GROUP = null; room = null; ITEMS = [];
+    document.body.classList.remove('role-teacher','role-student');
+    appScreen.hidden = true;
+    gateScreen.hidden = false;
+    setUrl(null, false);
+    if(msg) showGateError(msg);
+    if(teacherOk) renderGateTeacherRooms();
+  }
+  function leaveRoom(){ backToGate(''); }
+
+  // 교사: 수업 종료 (이 수업 코드의 기록을 서버에서 모두 삭제)
+  async function endClass(){
+    if(!isTeacher()) return;
+    const n = ITEMS.length;
+    const warn = (n>0 && savedCount!==n)
+      ? '⚠ 아직 내려받거나 구글 시트에 기록하지 않은 내용이 있습니다. 필요하면 [취소]를 누르고 먼저 저장하세요.\n\n' : '';
+    if(!confirm(warn+'수업을 종료하고 이 수업 코드('+ROOM+')의 모든 기록을 삭제할까요?\n학생 화면도 모두 닫히고, 삭제한 뒤에는 되돌릴 수 없습니다.')) return;
+    const code = ROOM;
+    try{
+      await backend.deleteRoom(code);
+      await backend.removeMyRoom(code);
+      room = null;
+      backToGate('');
+      toast('수업을 종료하고 기록을 삭제했습니다.');
+    }catch(e){ storeError(e); }
+  }
+
+  $('copy-link-btn').addEventListener('click', ()=>copyText($('share-link-input'), $('copy-link-btn')));
+
+  /* =========================================================
+   * 탭 전환 (학생이 자유롭게 이동)
+   * ========================================================= */
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      [1,2,3].forEach(n=>{
+        $('panel-'+n).hidden = (String(n) !== tab.dataset.stage);
+      });
+    });
+  });
+
+  /* =========================================================
+   * 입력 추가 (모둠별로 쌓임)
+   * ========================================================= */
+  function addItem(kind, side, inputId){
+    if(ROLE!=='student'){ toast('학생 화면에서 모둠을 정해 입장해야 작성할 수 있습니다.'); return; }
+    const input = $(inputId);
+    const text = input.value.trim();
+    if(!text) return;
+    const item = {kind, group:GROUP, text, ts:backend.now()};
+    if(side) item.side = side;
+    if(kind==='q'){
+      const s = suggestLevel(text);
+      if(s) item.suggestion = s;
+    }
+    save({['items/'+backend.newId()]: item});
+    input.value = '';
+    saveDraft();
+  }
+  function addQ(key){
+    if(key===1) addItem('s1', null, 'input-1');
+    else addItem('q', key==='2A'?'A':'B', 'input-'+key);
+  }
+  function addArg(key){ addItem('arg', key==='2A'?'A':'B', 'input-arg-'+key); }
+  function addLedger(){ addItem('s3', null, 'input-3'); }
+
+  // Enter key support
+  ['input-1','input-arg-2A','input-arg-2B','input-2A','input-2B','input-3'].forEach(id=>{
+    $(id).addEventListener('keydown', e=>{
+      if(e.key!=='Enter' || e.isComposing) return;
+      if(id==='input-1') addQ(1);
+      else if(id==='input-arg-2A') addArg('2A');
+      else if(id==='input-arg-2B') addArg('2B');
+      else if(id==='input-2A') addQ('2A');
+      else if(id==='input-2B') addQ('2B');
+      else if(id==='input-3') addLedger();
+    });
+  });
+
+  /* =========================================================
+   * 분류 / 별표 / 삭제
+   * ========================================================= */
+  function findItem(id){ return ITEMS.find(x=>x.id===id); }
+  function cycleLevel(id){
+    const item = findItem(id);
+    if(!item || isTeacher() || item.group!==GROUP) return;
+    const i = LEVELS.indexOf(item.level);
+    const next = i===-1 ? LEVELS[0] : (i===LEVELS.length-1 ? null : LEVELS[i+1]);
+    save({['items/'+id+'/level']: next});
+  }
+  function acceptSuggestion(id){
+    const item = findItem(id);
+    if(!item || isTeacher() || item.group!==GROUP || !item.suggestion) return;
+    save({['items/'+id+'/level']: item.suggestion});
+  }
+  function toggleStar(id){
+    const item = findItem(id);
+    if(!item || !canModify(item)) return;
+    save({['items/'+id+'/star']: item.star ? null : true});
+  }
+  function delItem(id){
+    const item = findItem(id);
+    if(!item || !canModify(item)) return;
+    if(!confirm('이 기록을 지울까요?')) return;
+    save({['items/'+id]: null});
+  }
+  function clearStage(n){
+    if(!isTeacher()) return;
+    if(!confirm('이 단계에 모인 모든 모둠의 입력이 삭제됩니다. 계속할까요?')) return;
+    const kinds = n===1 ? ['s1'] : (n===2 ? ['arg','q'] : ['s3']);
+    const updates = {};
+    ITEMS.filter(i=>kinds.includes(i.kind)).forEach(i=>{ updates['items/'+i.id] = null; });
+    if(Object.keys(updates).length) save(updates);
+  }
+  function setWho(btn, who){
+    document.querySelectorAll('.who-select .who-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* =========================================================
+   * 교사 제어 (서버 규칙이 교사 계정만 허락)
+   * ========================================================= */
+  function toggleMaterial(){
+    if(!isTeacher() || !room) return;
+    save({'ctrl/materialOpen': !(room.ctrl && room.ctrl.materialOpen)});
+  }
+  function resetAll(){
+    if(!isTeacher()) return;
+    if(!confirm('모든 모둠이 작성한 내용과 학습자료 공개 상태를 모두 지웁니다. (수업 코드는 그대로입니다) 계속할까요?')) return;
+    save({items:null, 'ctrl/materialOpen':false}).then(()=>toast('수업 데이터를 모두 초기화했습니다.'));
+  }
+
+  /* =========================================================
+   * 화면 그리기
+   * ========================================================= */
+  function renderAll(){
+    renderStage1();
+    renderStudy();
+    renderStage2();
+    renderLedger();
+    if(isTeacher()){ renderTeacher(); renderProjector(); }
+    tickTimer();
+  }
+
+  function levelTag(q, editable){
+    const label = q.level===null ? '분류하기' : q.level;
+    const cls = q.level===null ? '' : 'lvl-'+q.level;
+    return editable
+      ? `<button class="tag-btn ${cls}" onclick="cycleLevel('${q.id}')">${label}</button>`
+      : `<span class="tag-btn ${cls}" style="cursor:default;">${q.level===null ? '미분류' : q.level}</span>`;
+  }
+
+  function renderStage1(){
+    const list = ITEMS.filter(i=>i.kind==='s1');
+    const l1 = $('list-1');
+    l1.innerHTML = list.length ? '' : '<div class="empty-hint">아직 대답이 없습니다. 위 질문에 대해 생각을 적어보세요.</div>';
+    list.forEach(q=>{
+      const li = document.createElement('li');
+      li.className='qitem';
+      const starHtml = canModify(q)
+        ? `<button class="star-btn ${q.star?'on':''}" onclick="toggleStar('${q.id}')">★</button>`
+        : `<span class="star-btn ${q.star?'on':''}" style="cursor:default;">★</span>`;
+      const delHtml = canModify(q) ? `<button class="del-btn" onclick="delItem('${q.id}')">✕</button>` : '';
+      li.innerHTML = `
+        ${starHtml}
+        ${groupBadge(q.group)}
+        <span class="qtext">${escapeHtml(q.text)}</span>
+        ${delHtml}
+      `;
+      l1.appendChild(li);
+    });
+  }
+
+  // 학습자료: 교사가 열면 모든 학생 화면에 열림 (교사는 항상 볼 수 있음)
+  let lastMaterialOpen = null;
+  function renderStudy(){
+    const open = !!(room && room.ctrl && room.ctrl.materialOpen);
+    const show = open || isTeacher();
+    $('study-locked').hidden = show;
+    $('study-material').hidden = !show;
+    if(!isTeacher() && lastMaterialOpen===false && open){
+      $('study-material').open = true;
+      toast('교사가 학습자료를 열었어요 📖');
+    }
+    lastMaterialOpen = open;
+  }
+
+  function renderStage2(){
+    ['A','B'].forEach(s=>{
+      const key = '2'+s;
+      const itemCls = 'qitem '+(s==='A'?'teamA-item':'teamB-item');
+
+      // ① 대리인 주장
+      const args = ITEMS.filter(i=>i.kind==='arg' && i.side===s);
+      const la = $('list-arg-'+key);
+      la.innerHTML = args.length ? '' : '<div class="empty-hint">아직 작성된 주장이 없습니다.</div>';
+      args.forEach(a=>{
+        const li = document.createElement('li');
+        li.className = itemCls;
+        const delHtml = canModify(a) ? `<button class="del-btn" onclick="delItem('${a.id}')">✕</button>` : '';
+        li.innerHTML = `
+          ${groupBadge(a.group)}
+          <span class="qtext">${escapeHtml(a.text)}</span>
+          ${delHtml}
+        `;
+        la.appendChild(li);
+      });
+
+      // ② 궁금한 점 (질문)
+      const qs = ITEMS.filter(i=>i.kind==='q' && i.side===s);
+      const lq = $('list-'+key);
+      lq.innerHTML = qs.length ? '' : '<div class="empty-hint">아직 질문이 없습니다.</div>';
+      qs.forEach(q=>{
+        const li = document.createElement('li');
+        li.className = itemCls;
+        // 분류는 질문을 쓴 모둠만 할 수 있음 (교사는 보기만)
+        const editable = ROLE==='student' && q.group===GROUP;
+        const hint = (q.level===null && q.suggestion && editable) ?
+          `<button class="hint-btn" onclick="acceptSuggestion('${q.id}')">💡 ${escapeHtml(q.suggestion)}?</button>` : '';
+        const delHtml = canModify(q) ? `<button class="del-btn" onclick="delItem('${q.id}')">✕</button>` : '';
+        li.innerHTML = `
+          ${groupBadge(q.group)}
+          <span class="qtext">${escapeHtml(q.text)}</span>
+          ${hint}
+          ${levelTag(q, editable)}
+          ${delHtml}
+        `;
+        lq.appendChild(li);
+      });
+    });
+  }
+
+  function renderLedger(){
+    const list = ITEMS.filter(i=>i.kind==='s3');
+    const ledgerEl = $('ledger');
+    ledgerEl.innerHTML = '';
+    if(list.length===0){
+      const div = document.createElement('div');
+      div.className='ledger-item';
+      div.innerHTML = '<span class="ledger-text empty-hint">판단 항목이 여기에 기록됩니다.</span>';
+      ledgerEl.appendChild(div);
+    }
+    list.forEach((item,idx)=>{
+      const div = document.createElement('div');
+      div.className='ledger-item';
+      const delHtml = canModify(item) ? `<button class="ledger-del" onclick="delItem('${item.id}')">✕</button>` : '';
+      div.innerHTML = `
+        <span class="ledger-num">${idx+1}</span>
+        <span class="ledger-badge N">재판부</span>
+        ${groupBadge(item.group)}
+        <span class="ledger-text">${escapeHtml(item.text)}</span>
+        ${delHtml}
+      `;
+      ledgerEl.appendChild(div);
+    });
+  }
+
+  // ---- 교사 화면 ----
+  function bloomCounts(){
+    const c = {A:{}, B:{}, T:{}};
+    ['A','B','T'].forEach(k=>{ LEVELS.concat(['미분류']).forEach(l=>{ c[k][l] = 0; }); });
+    ITEMS.filter(i=>i.kind==='q').forEach(q=>{
+      const l = q.level || '미분류';
+      if(c[q.side]) c[q.side][l]++;
+      c.T[l]++;
+    });
+    return c;
+  }
+
+  function renderTeacher(){
+    const open = !!(room && room.ctrl && room.ctrl.materialOpen);
+    $('tp-material-state').textContent = open ? '열림' : '잠김';
+    $('tp-material-state').classList.toggle('on', open);
+    $('tp-material-btn').textContent = open ? '닫기' : '열기';
+
+    // 모둠별 제출 현황 (입력 개수)
+    const n = (g, kind, side)=>ITEMS.filter(i=>i.group===g && i.kind===kind && (!side || i.side===side)).length;
+    const cell = v=> v ? `<td class="ok">${v}개</td>` : '<td class="no">–</td>';
+    let rows = '<tr><th>모둠</th><th>STAGE 1 대답</th><th>주장 (검사 측)</th><th>주장 (변호인 측)</th><th>궁금한 점 (검사 측)</th><th>궁금한 점 (변호인 측)</th><th>STAGE 3 판단 근거</th></tr>';
+    groupsNums().forEach(g=>{
+      rows += `<tr><td><strong>${g}모둠</strong></td>${cell(n(g,'s1'))}${cell(n(g,'arg','A'))}${cell(n(g,'arg','B'))}${cell(n(g,'q','A'))}${cell(n(g,'q','B'))}${cell(n(g,'s3'))}</tr>`;
+    });
+    $('status-table').innerHTML = rows;
+
+    // 6단계 분류 현황
+    const c = bloomCounts();
+    const cols = LEVELS.concat(['미분류']);
+    const row = (label, k)=>`<tr><th>${label}</th>${cols.map(l=>`<td>${c[k][l]}</td>`).join('')}</tr>`;
+    $('bloom-counts').innerHTML = `
+      <table class="info-table bloom-table">
+        <tr><th></th>${cols.map(l=>`<td><span class="tag-btn ${l==='미분류'?'':'lvl-'+l}" style="cursor:default;">${l}</span></td>`).join('')}</tr>
+        ${row('검사 측','A')}${row('변호인 측','B')}${row('합계','T')}
+      </table>`;
+  }
+
+  /* =========================================================
+   * 크게 띄우기 (프로젝터용) — 교사 화면에서만
+   * ========================================================= */
+  const projector = $('projector');
+  let pjMode = 's1';
+  let pjScale = 1;
+  let pjGroupsBuilt = false;
+
+  function openProjector(){
+    if(!isTeacher()) return;
+    const active = document.querySelector('.tab.active');
+    const st = active ? active.dataset.stage : '1';
+    pjMode = st==='2' ? 'arg' : (st==='3' ? 's3' : 's1');
+    projector.hidden = false;
+    document.body.style.overflow = 'hidden';
+    try{ if(projector.requestFullscreen) projector.requestFullscreen().catch(()=>{}); }catch(e){}
+    renderProjector();
+  }
+  function closeProjector(){
+    if(projector.hidden) return;
+    projector.hidden = true;
+    document.body.style.overflow = '';
+    try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  }
+  function setPjMode(m){ pjMode = m; renderProjector(); }
+  function pjZoom(d){
+    pjScale = Math.min(2, Math.max(0.6, pjScale + d));
+    projector.style.setProperty('--pj', pjScale);
+  }
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && !projector.hidden && !document.fullscreenElement) closeProjector();
+  });
+
+  function renderProjector(){
+    if(projector.hidden || !room) return;
+    document.querySelectorAll('#pj-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.pj===pjMode));
+    const sel = $('pj-group');
+    if(!pjGroupsBuilt){
+      pjGroupsBuilt = true;
+      sel.innerHTML = '<option value="">전체 모둠</option>' + groupsNums().map(g=>`<option value="${g}">${g}모둠</option>`).join('');
+    }
+    sel.hidden = (pjMode==='bloom');
+    const g = sel.value;
+    const pick = (kind, side)=>ITEMS.filter(i=>i.kind===kind && (!side || i.side===side) && (!g || i.group===g));
+    const empty = '<div class="pj-empty">아직 입력이 없습니다.</div>';
+    const itemHtml = (i, extra)=>`
+      <div class="pj-item ${i.side==='A'?'teamA-item':(i.side==='B'?'teamB-item':'')}">
+        ${i.star ? '<span class="star-btn on" style="cursor:default;">★</span>' : ''}
+        ${groupBadge(i.group)}
+        <span class="pj-text">${escapeHtml(i.text)}</span>
+        ${extra||''}
+      </div>`;
+    const cols = (kind, extraFn)=>`
+      <div class="versus">
+        ${['A','B'].map((s,idx)=>{
+          const list = pick(kind, s);
+          return (idx===1 ? '<div class="divider"></div>' : '') + `
+            <div class="team-col team${s}">
+              <div class="team-label">${SIDE_LABEL[s]}</div>
+              ${list.length ? list.map(i=>itemHtml(i, extraFn ? extraFn(i) : '')).join('') : empty}
+            </div>`;
+        }).join('')}
+      </div>`;
+
+    let title = '', body = '';
+    if(pjMode==='s1'){
+      title = LESSON.titles.s1;
+      const list = pick('s1');
+      body = list.length ? list.map(i=>itemHtml(i)).join('') : empty;
+    } else if(pjMode==='arg'){
+      title = LESSON.titles.arg;
+      body = cols('arg');
+    } else if(pjMode==='q'){
+      title = '상대측 주장에 대해 궁금한 점';
+      body = cols('q', i=>levelTag(i,false));
+    } else if(pjMode==='s3'){
+      title = LESSON.titles.s3;
+      const list = pick('s3');
+      body = list.length ? list.map((i,idx)=>`
+        <div class="pj-item">
+          <span class="ledger-num">${idx+1}</span>
+          ${groupBadge(i.group)}
+          <span class="pj-text">${escapeHtml(i.text)}</span>
+        </div>`).join('') : empty;
+    } else {
+      title = '궁금한 점 — 6단계 분류 현황';
+      const c = bloomCounts().T;
+      const levels = LEVELS.concat(['미분류']);
+      const max = Math.max(1, ...levels.map(l=>c[l]));
+      body = '<div class="pj-bars">' + levels.map(l=>`
+        <div class="pj-bar-row">
+          <span class="pj-bar-label">${l}</span>
+          <div class="pj-bar-track"><div class="pj-bar-fill ${l==='미분류'?'':'tag-btn lvl-'+l}" style="width:${c[l]/max*100}%;"></div></div>
+          <span class="pj-bar-num">${c[l]}</span>
+        </div>`).join('') + '</div>';
+    }
+    $('pj-body').innerHTML = `<div class="pj-title">${title}</div>${body}`;
+  }
+
+  /* =========================================================
+   * 전체 기록 정리 (CSV 내려받기 · 구글 시트 기록에 함께 사용)
+   * ========================================================= */
+  let savedCount = -1;   // 마지막으로 내려받거나 시트에 기록했을 때의 입력 수
+  function fullTime(ts){
+    if(!ts) return '';
+    const d = new Date(ts), p = n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  }
+  function safeCell(v){
+    let s = String(v===null || v===undefined ? '' : v);
+    if(/^[=+\-@]/.test(s)) s = "'"+s;   // 엑셀·시트가 수식으로 잘못 읽지 않도록
+    return s;
+  }
+  function buildRows(){
+    const KIND = {
+      s1:  ['STAGE 1 지식습득', '대답'],
+      arg: ['STAGE 2 지식활용', '① 대리인 주장'],
+      q:   ['STAGE 2 지식활용', '② 궁금한 점'],
+      s3:  ['STAGE 3 지식창출', '판단 근거']
+    };
+    const order = ['s1','arg','q','s3'];
+    const rows = [['수업 코드','단계','활동','모둠','역할','내용','6단계 분류','별표','시각']];
+    ITEMS.slice().sort((a,b)=>
+      (order.indexOf(a.kind)-order.indexOf(b.kind)) || (Number(a.group)-Number(b.group)) || ((a.ts||0)-(b.ts||0))
+    ).forEach(i=>{
+      const k = KIND[i.kind] || ['', ''];
+      rows.push([
+        ROOM, k[0], k[1], i.group ? i.group+'모둠' : '',
+        i.kind==='s3' ? '재판부' : (SIDE_LABEL[i.side] || ''),
+        i.text,
+        i.kind==='q' ? (i.level || '미분류') : '',
+        i.star ? '★' : '',
+        fullTime(i.ts)
+      ]);
+    });
+    return rows.map(r=>r.map(safeCell));
+  }
+  function stamp(){
+    const d = new Date(), p = n=>String(n).padStart(2,'0');
+    return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes());
+  }
+  function downloadCsv(){
+    if(!isTeacher() || !ROOM) return;
+    const rows = buildRows();
+    if(rows.length<=1){ toast('아직 내려받을 입력이 없습니다.'); return; }
+    const csv = rows.map(r=>r.map(c=>'"'+c.replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    // 맨 앞의 ﻿ 는 엑셀에서 한글이 깨지지 않게 하는 표시
+    const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = LESSON.file+'_기록_'+ROOM+'_'+stamp()+'.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    savedCount = ITEMS.length;
+    toast('기록 '+(rows.length-1)+'건을 내려받았습니다. (다운로드 폴더 확인)');
+  }
+
+  /* =========================================================
+   * 구글 시트에 기록하기 (교사 화면 → 선생님 구글 시트의 '받는 창구')
+   * 연결 주소는 서버의 교사 전용 칸에 저장되어 학생에게 보이지 않습니다.
+   * ========================================================= */
+  let sheetUrl = '';
+  const SHEET_URL_RE = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/;
+  function renderSheetState(){
+    $('sheet-state').textContent = sheetUrl ? '연결됨' : '연결 안 됨';
+    $('sheet-state').classList.toggle('on', !!sheetUrl);
+    $('sheet-url').value = sheetUrl;
+  }
+  async function loadSheetUrl(){
+    try{ sheetUrl = await backend.getSetting('sheetUrl'); }catch(e){ console.error(e); sheetUrl = ''; }
+    renderSheetState();
+  }
+  async function saveSheetUrl(){
+    if(!isTeacher()) return;
+    const v = $('sheet-url').value.trim();
+    if(v && !SHEET_URL_RE.test(v)){
+      toast('주소가 맞지 않습니다. https://script.google.com/macros/s/ 로 시작하고 /exec 로 끝나야 합니다.');
+      return;
+    }
+    try{
+      await backend.setSetting('sheetUrl', v);
+      sheetUrl = v;
+      renderSheetState();
+      toast(v ? '구글 시트 연결 주소를 저장했습니다.' : '구글 시트 연결을 해제했습니다.');
+    }catch(e){ storeError(e); }
+  }
+  async function sendToSheet(){
+    if(!isTeacher() || !ROOM) return;
+    if(!sheetUrl){ toast('먼저 "구글 시트 연결"에 주소를 넣고 저장하세요.'); $('sheet-url').focus(); return; }
+    const rows = buildRows();
+    if(rows.length<=1){ toast('아직 기록할 내용이 없습니다.'); return; }
+    const d = new Date(), p = n=>String(n).padStart(2,'0');
+    const sheetName = d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+LESSON.no+' '+ROOM;
+    toast('구글 시트에 기록하는 중…');
+    try{
+      const res = await fetch(sheetUrl, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({sheetName, rows})});
+      const out = await res.json();
+      if(!out.ok) throw new Error(out.error || '알 수 없는 오류');
+      savedCount = ITEMS.length;
+      toast('구글 시트의 "'+out.sheet+'" 탭에 '+out.count+'건을 기록했습니다.');
+    }catch(e){
+      // 응답을 확인하지 못한 경우: 이미 기록됐을 수 있으므로 다시 보내지 않고 확인을 안내
+      console.error(e);
+      alert('구글 시트의 응답을 확인하지 못했습니다.\n\n구글 시트를 열어 "'+sheetName+'" 탭이 생겼는지 확인해주세요.\n탭이 없으면 인터넷 연결과 연결 주소를 확인한 뒤 다시 눌러주세요.\n(오류: '+e.message+')');
+    }
+  }
+
+  /* =========================================================
+   * 타이머 — 교사만 조작, 모든 화면에 같은 시간 (서버 시계 기준)
+   *   ctrl/timer : { seconds, running, endTime, done }
+   * ========================================================= */
+  const timerDisplay = $('timer-display');
+  const timerWidget = $('timer-widget');
+  const timerBtn = $('timer-startpause');
+  const pjTimer = $('pj-timer');
+  let beepedFor = null;
+
+  function formatTime(sec){
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    return m+':'+s;
+  }
+  function timerState(){
+    return (room && room.ctrl && room.ctrl.timer) || {seconds:0, running:false, endTime:0, done:false};
+  }
+  function writeTimer(t){ save({'ctrl/timer': t}); }
+  function timerSet(minutes){
+    if(!isTeacher()) return;
+    writeTimer({seconds:minutes*60, running:false, endTime:0, done:false});
+  }
+  function timerStartPause(){
+    if(!isTeacher()) return;
+    const t = timerState();
+    if(t.running){
+      const remaining = Math.max(0, Math.ceil((t.endTime - backend.now())/1000));
+      writeTimer({seconds:remaining, running:false, endTime:0, done:false});
+    } else {
+      if((t.seconds||0)<=0) return;
+      writeTimer({seconds:t.seconds, running:true, endTime:backend.now()+t.seconds*1000, done:false});
+    }
+  }
+  function timerReset(){
+    if(!isTeacher()) return;
+    writeTimer({seconds:0, running:false, endTime:0, done:false});
+  }
+  function tickTimer(){
+    const t = timerState();
+    let remaining = Math.max(0, t.seconds||0);
+    let done = !!t.done;
+    if(t.running && t.endTime){
+      remaining = Math.max(0, Math.ceil((t.endTime - backend.now())/1000));
+      if(remaining<=0){
+        done = true;
+        if(beepedFor!==t.endTime){
+          beepedFor = t.endTime;
+          beep();
+          if(isTeacher()) writeTimer({seconds:0, running:false, endTime:0, done:true});
+        }
+      }
+    }
+    const text = formatTime(remaining);
+    timerDisplay.textContent = text;
+    pjTimer.textContent = text;
+    timerWidget.classList.toggle('done', done);
+    pjTimer.classList.toggle('done', done);
+    timerBtn.textContent = t.running ? '❚❚' : '▶';
+  }
+  function beep(){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.value = 0.15;
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start();
+      setTimeout(()=>{ osc.stop(); ctx.close(); }, 500);
+    }catch(e){ /* 오디오 미지원 브라우저는 무시 */ }
+  }
+  setInterval(()=>{ if(ROOM) tickTimer(); }, 250);
+
+  /* =========================================================
+   * 시작
+   * ========================================================= */
+  (async function boot(){
+    $('gate-mode-note').hidden = !PRACTICE;
+    $('mode-note').hidden = !PRACTICE;
+    if(PRACTICE) $('mode-note').textContent = '연습 모드 — 이 컴퓨터의 같은 브라우저 창끼리만 공유됩니다.';
+    backend.onAuth(onAuthChanged);
+
+    // 학생이 새로고침했을 때: 같은 수업 코드와 모둠으로 바로 다시 입장
+    const code = (params.get('code')||'').trim();
+    if(!/^\d{4}$/.test(code)) return;
+    $('gate-code-input').value = code;
+    if(params.get('role')==='teacher') return;   // 교사는 로그인 확인 뒤 자동 입장
+    let s = null;
+    try{ s = JSON.parse(sessionStorage.getItem(SESSION_KEY)); }catch(e){}
+    if(s && s.code===code && s.group){
+      try{
+        if(await backend.roomMeta(code)){ enterRoom(code, 'student', s.group); return; }
+      }catch(e){ console.error(e); }
+    }
+    $('gate-group-select').focus();
+  })();
+</script>
+</body>
+</html>
